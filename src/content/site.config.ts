@@ -1,20 +1,22 @@
 // Single source of truth for all site content.
 // Components read from here; never hard-code copy in components.
-// Anything still marked TODO(Tanz) is a placeholder waiting on real content.
+// Empty strings / empty arrays are hidden on the page, so unfinished content can stay blank.
 
 export const site = {
   name: "Tanmay Singh",
   nickname: "Tanz",
   role: "Data Engineer · MLOps · AI systems",
-  pitch: "TODO(Tanz): one sentence",
+  pitch: "", // TODO(Tanz): one sentence
   location: "India · open to UK roles",
-  email: "TODO(Tanz)",
+  email: "tanmay.work10@gmail.com",
   url: "https://tzing66.github.io",
   links: {
     github: "https://github.com/Tzing66",
-    linkedin: "https://www.linkedin.com/in/TODO",
-    resume: "/resume/Tanmay_Singh_Resume.pdf",
+    linkedin: "https://www.linkedin.com/in/tanmay-singh-3167b91b3/",
+    resume: "/resume/TS_DE_26.pdf",
   },
+  // Filename the browser saves the resume as when using the download button.
+  resumeDownloadName: "Tanmay_Singh_Resume.pdf",
 };
 
 // Page sections in scroll order. Drives the nav, progress rail and command palette.
@@ -32,30 +34,33 @@ export type SectionId = (typeof sections)[number]["id"];
 
 export const about = {
   paragraphs: [
-    "TODO(Tanz): paragraph 1. Facts so far: CS degree from Manipal University Jaipur; MS in Data Science, Analytics and Engineering from Arizona State University.",
-    "TODO(Tanz): paragraph 2. Facts so far: data engineer with a background in MLOps; now based in India and open to UK roles.",
-  ],
+    // TODO(Tanz): 2–3 short paragraphs
+  ] as string[],
   photo: "", // TODO(Tanz): optional, e.g. "/me.jpg"
-  facts: ["📍 India · open to UK", "🛠 MLOps & Data Engineering", "🎓 MS @ Arizona State"],
+  facts: ["📍 India · open to UK", "🛠 MLOps & Data Engineering", "🎓 MS @ Arizona State", "💻 BTech CSE @ Manipal"],
 };
 
 export const experience = [
   {
     role: "Data Engineer (AI & Backend Systems)",
     company: "Vault IQ",
+    detail: "",
     location: "Remote",
     period: "Dec 2025 – May 2026",
-    bullets: ["TODO(Tanz): 2–3 bullet points describing impact"],
+    bullets: [
+      // TODO(Tanz): 2–3 bullet points describing impact
+    ] as string[],
     stack: [] as string[],
   },
   {
     role: "Data Engineer",
-    company: "Capgemini (HSBC UK account, Application Data Management)",
+    company: "Capgemini",
+    detail: "HSBC UK account · Application Data Management",
     location: "",
     period: "Oct 2020 – Mar 2023",
     bullets: [
       "Optimized SQL queries and wrote SCD logic to meet ETL SLAs",
-      "TODO(Tanz): any metrics",
+      // TODO(Tanz): any metrics
     ],
     stack: ["SQL", "Python", "Spark", "Airflow"],
   },
@@ -63,67 +68,116 @@ export const experience = [
 
 export const education = [
   {
-    degree: "MS, Data Science, Analytics and Engineering",
+    degree: "MSc, Data Science and Analytics Engineering",
     school: "Arizona State University",
-    period: "", // TODO(Tanz)
+    period: "", // TODO(Tanz): optional years
   },
   {
-    degree: "B.Tech, Computer Science", // TODO(Tanz): confirm exact degree title
+    degree: "BTech, Computer Science Engineering",
     school: "Manipal University Jaipur",
-    period: "", // TODO(Tanz)
+    period: "", // TODO(Tanz): optional years
   },
 ];
 
+export type ProjectTag = "Data Eng" | "ML" | "AI" | "Analytics";
+
+export type Project = {
+  repo: string; // owner/name on GitHub
+  slug: string; // URL id (#projects/<slug>) and write-up file: src/content/projects/<slug>.md
+  featured?: boolean; // large card
+  title?: string; // overrides the repo name
+  tagline?: string; // falls back to the GitHub description
+  status?: "live" | "building" | "complete" | "archived";
+  demo?: string;
+  image?: string; // screenshot under public/
+  highlights?: string[];
+  stack?: string[];
+  tags?: ProjectTag[]; // drives the filter chips
+};
+
 // Curated allowlist. ONLY repos listed here are shown, in this order.
-export const projects = [
+export const projects: Project[] = [
   {
     repo: "Tzing66/CheckYourData",
+    slug: "checkyourdata",
     featured: true,
     title: "CheckYourData",
     tagline: "Data quality checks, suggested by an AI agent",
     status: "building",
-    demo: "",
-    image: "",
+    demo: "", // TODO(Tanz): Render URL if you want it linked
     highlights: [
       "Upload a dataset; an agent reads the schema and proposes validation checks",
       "Approve or edit suggestions alongside preset checks",
     ],
     stack: ["React", "FastAPI", "Postgres", "Claude API", "Docker"],
+    tags: ["Data Eng", "AI"],
   },
   {
     repo: "Tzing66/checkyouraqi",
+    slug: "checkyouraqi",
     featured: true,
     title: "CheckYourAQI",
-    tagline: "Air quality forecasting and alerting platform",
-    status: "building",
-    stack: ["Airflow", "AWS", "Python", "ML"],
+    tagline: "PM2.5 forecasts 24–72h ahead for 70 Delhi NCR monitoring stations",
+    status: "live",
+    demo: "https://checkyouraqi.streamlit.app",
+    image: "/projects/checkyouraqi.jpg",
+    highlights: [
+      "Hourly ingestion into an S3/Iceberg lakehouse modelled with 27 dbt models on Athena",
+      "LightGBM forecaster with leakage-checked training and champion/challenger promotion",
+      "Public Streamlit dashboard and FastAPI read API, running unattended on AWS",
+    ],
+    stack: ["Airflow", "AWS", "dbt", "Iceberg", "LightGBM", "FastAPI", "Streamlit"],
+    tags: ["Data Eng", "ML"],
+  },
+  {
+    repo: "Tzing66/Real-Time-Clickstream-Analytics-Pipeline-on-AWS",
+    slug: "clickstream",
+    featured: true,
+    title: "Real-Time Clickstream Analytics",
+    tagline: "Serverless streaming pipeline on AWS, from simulated clicks to queryable partitions",
+    status: "complete",
+    highlights: [
+      "Kinesis + Lambda ingestion of simulated clickstream events into a raw S3 zone",
+      "Glue ETL flattens and partitions by date; Athena repairs and queries the table",
+      "Step Functions orchestrates the run, with SNS success/failure notifications",
+    ],
+    stack: ["Kinesis", "Lambda", "Glue", "S3", "Athena", "Step Functions", "Python"],
+    tags: ["Data Eng"],
   },
   {
     repo: "Tzing66/job_matching_agent",
+    slug: "job-matching-agent",
     title: "Job Matching Agent",
     tagline: "Fetches and scores job postings against my resumes",
-    stack: ["Python", "Claude", "Adzuna API", "Excel"],
+    status: "building",
+    stack: ["Python", "Claude API", "Adzuna API", "SQLite", "Excel"],
+    tags: ["AI"],
   },
-  // TODO(Tanz): add, remove or reorder. ONLY repos listed here are shown.
-] satisfies Project[];
-
-export type Project = {
-  repo: string;
-  featured?: boolean;
-  title?: string;
-  tagline?: string;
-  status?: "live" | "building" | "archived";
-  demo?: string;
-  image?: string;
-  highlights?: string[];
-  stack?: string[];
-};
+  {
+    repo: "Tzing66/Solar-Intensity-Model",
+    slug: "solar-intensity",
+    title: "Solar Intensity Model",
+    tagline: "Regression model predicting solar power output in Phoenix, AZ",
+    status: "complete",
+    stack: ["Python", "scikit-learn", "pvlib", "NASA POWER API"],
+    tags: ["ML"],
+  },
+  {
+    repo: "Tzing66/mesa-transit-expansion-emissions-analysis",
+    slug: "mesa-transit",
+    title: "Mesa Transit Expansion & Emissions",
+    tagline: "GIS transit planning and CO₂ impact modelling for underserved Mesa, AZ (ASU grad project)",
+    status: "complete",
+    stack: ["QGIS", "Python", "GeoPandas", "Matplotlib"],
+    tags: ["Analytics"],
+  },
+];
 
 // TODO(Tanz): confirm the final list.
 export const stack = [
   { group: "Languages", items: ["Python", "SQL"] },
-  { group: "Data", items: ["Spark", "Airflow", "Postgres"] },
-  { group: "ML/AI", items: ["FastAPI", "Claude API"] },
+  { group: "Data", items: ["Spark", "Airflow", "Postgres", "dbt"] },
+  { group: "ML/AI", items: ["FastAPI", "Claude API", "scikit-learn", "LightGBM"] },
   { group: "Cloud & DevOps", items: ["AWS", "Docker", "GitHub Actions"] },
 ];
 

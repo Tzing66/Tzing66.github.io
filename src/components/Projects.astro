@@ -1,0 +1,126 @@
+---
+import { getCollection, render } from "astro:content";
+import ProjectCard from "./ProjectCard.astro";
+import Icon from "./Icon.astro";
+import { projects } from "../content/site.config";
+import { repoStats } from "../lib/github";
+
+const writeups = new Map((await getCollection("projects")).map((e) => [e.id, e]));
+const tags = [...new Set(projects.flatMap((p) => p.tags ?? []))];
+
+const modals = await Promise.all(
+  projects
+    .filter((p) => writeups.has(p.slug))
+    .map(async (p) => ({ project: p, Content: (await render(writeups.get(p.slug)!)).Content })),
+);
+---
+
+{
+  tags.length > 1 && (
+    <div class="mb-6 flex flex-wrap gap-2" role="group" aria-label="Filter projects">
+      {["All", ...tags].map((t) => (
+        <button
+          type="button"
+          data-filter={t}
+          aria-pressed={t === "All" ? "true" : "false"}
+          class="rounded-full border border-line px-3 py-1 font-mono text-xs text-muted transition-colors hover:text-fg aria-pressed:border-accent aria-pressed:text-accent-ink"
+        >
+          {t}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+<ul class="grid gap-4 md:grid-cols-2">
+  {projects.map((p) => <ProjectCard project={p} hasWriteup={writeups.has(p.slug)} />)}
+</ul>
+
+{
+  modals.map(({ project: p, Content }) => {
+    const repoUrl = repoStats(p.repo)?.url ?? `https://github.com/${p.repo}`;
+    return (
+      <dialog
+        id={`project-${p.slug}`}
+        data-project-modal={p.slug}
+        aria-labelledby={`project-${p.slug}-title`}
+        class="m-auto max-h-[min(88dvh,900px)] w-[min(100%-2rem,760px)] overflow-y-auto rounded-2xl border border-line bg-surface p-0 text-fg backdrop:bg-black/60 backdrop:backdrop-blur-sm"
+      >
+        <div class="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-line bg-surface/95 px-6 py-4 backdrop-blur">
+          <div>
+            <p class="font-mono text-xs text-muted">{p.repo}</p>
+            <h3 id={`project-${p.slug}-title`} class="text-xl font-semibold tracking-tight">
+              {p.title ?? p.repo}
+            </h3>
+          </div>
+          <button type="button" data-close-project aria-label="Close" class="grid size-9 shrink-0 place-items-center rounded-md text-muted hover:text-fg">
+            <Icon name="close" />
+          </button>
+        </div>
+        <div class="writeup px-6 py-6">
+          <Content />
+        </div>
+        <div class="flex flex-wrap gap-3 border-t border-line px-6 py-4">
+          <a href={repoUrl} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-line px-3 py-2 text-sm hover:border-accent">
+            <Icon name="github" size={16} /> View repo
+          </a>
+          {p.demo && (
+            <a href={p.demo} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg bg-accent px-3 py-2 text-sm font-medium text-on-accent">
+              ↗ Live demo
+            </a>
+          )}
+        </div>
+      </dialog>
+    );
+  })
+}
+
+<script>
+  // Filter chips: show cards whose tags include the chosen filter.
+  const chips = document.querySelectorAll<HTMLButtonElement>("[data-filter]");
+  chips.forEach((chip) =>
+    chip.addEventListener("click", () => {
+      const tag = chip.dataset.filter!;
+      chips.forEach((c) => c.setAttribute("aria-pressed", String(c === chip)));
+      document.querySelectorAll<HTMLElement>("[data-project-card]").forEach((card) => {
+        card.hidden = tag !== "All" && !card.dataset.tags!.split("|").includes(tag);
+      });
+    }),
+  );
+
+  // Write-up modals. The URL hash (#projects/<slug>) mirrors the open modal so it can be shared.
+  const modal = (slug: string) => document.querySelector<HTMLDialogElement>(`[data-project-modal="${CSS.escape(slug)}"]`);
+  const slugFromHash = () => /^#projects\/(.+)$/.exec(location.hash)?.[1];
+
+  function open(slug: string) {
+    const d = modal(slug);
+    if (!d || d.open) return;
+    d.showModal();
+    history.replaceState(null, "", `#projects/${slug}`);
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-open-project]").forEach((btn) =>
+    btn.addEventListener("click", () => open(btn.dataset.openProject!)),
+  );
+
+  document.querySelectorAll<HTMLDialogElement>("[data-project-modal]").forEach((d) => {
+    d.querySelector("[data-close-project]")!.addEventListener("click", () => d.close());
+    // The dialog has no padding, so a click whose target is the dialog itself landed on the backdrop.
+    d.addEventListener("click", (e) => {
+      if (e.target === d) d.close();
+    });
+    d.addEventListener("close", () => {
+      if (slugFromHash()) history.replaceState(null, "", "#projects");
+    });
+  });
+
+  // Deep link on load, and links to #projects/<slug> elsewhere on the page.
+  function openFromHash() {
+    const slug = slugFromHash();
+    if (!slug || !modal(slug)) return;
+    document.getElementById("projects")?.scrollIntoView({ behavior: "instant" });
+    open(slug);
+  }
+  addEventListener("hashchange", openFromHash);
+  openFromHash();
+</script>

@@ -100,3 +100,88 @@
   opacity: var(--grain-opacity);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+
+/* Lock page scroll while a project modal is open (scroll position is preserved). */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+/* Long-form project write-ups rendered from Markdown. */
+.writeup {
+  color: var(--muted);
+  line-height: 1.7;
+}
+.writeup > * + * {
+  margin-top: 1rem;
+}
+.writeup h2 {
+  margin-top: 2rem;
+  color: var(--fg);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.writeup h2:first-child {
+  margin-top: 0;
+}
+.writeup h2::before {
+  content: "## ";
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+.writeup strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+.writeup ul {
+  list-style: none;
+  padding: 0;
+}
+.writeup ul > li {
+  position: relative;
+  padding-left: 1.1rem;
+}
+.writeup ul > li + li {
+  margin-top: 0.4rem;
+}
+.writeup ul > li::before {
+  content: "›";
+  position: absolute;
+  left: 0;
+  color: var(--accent-ink);
+}
+.writeup ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+}
+.writeup code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--fg);
+}
+.writeup pre {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--bg) !important;
+  padding: 1rem;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.writeup table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.writeup th,
+.writeup td {
+  border-bottom: 1px solid var(--line);
+  padding: 0.4rem 0.9rem 0.4rem 0;
+  text-align: left;
+  white-space: nowrap;
+}
+.writeup th {
+  color: var(--fg);
+  font-weight: 600;
+}

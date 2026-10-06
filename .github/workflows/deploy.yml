@@ -26,6 +26,12 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      # Refresh GitHub stats for allowlisted repos; falls back to the committed cache on failure.
+      - name: Fetch GitHub data
+        run: npm run fetch:github
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: npm run build
       - uses: actions/upload-pages-artifact@v5
         with:

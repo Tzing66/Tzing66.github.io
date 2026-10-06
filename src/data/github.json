@@ -1,0 +1,53 @@
+{
+  "fetchedAt": "2026-10-06T14:01:49.924Z",
+  "repos": {
+    "tzing66/checkyourdata": {
+      "description": null,
+      "stars": 0,
+      "language": "Python",
+      "pushedAt": "2026-09-24T11:54:03Z",
+      "topics": [],
+      "url": "https://github.com/Tzing66/CheckYourData"
+    },
+    "tzing66/checkyouraqi": {
+      "description": "Air Quality forcasting and alerting",
+      "stars": 0,
+      "language": "Python",
+      "pushedAt": "2026-10-04T16:19:06Z",
+      "topics": [],
+      "url": "https://github.com/Tzing66/checkyouraqi"
+    },
+    "tzing66/real-time-clickstream-analytics-pipeline-on-aws": {
+      "description": "This project simulates, ingests, transforms, and analyzes clickstream data using a fully serverless architecture on AWS. It includes real-time ingestion using Kinesis and Lambda, data transformation with AWS Glue, storage in S3, query and repair via Athena, and orchestration using AWS Step Functions.",
+      "stars": 0,
+      "language": "Python",
+      "pushedAt": "2025-08-06T06:26:29Z",
+      "topics": [],
+      "url": "https://github.com/Tzing66/Real-Time-Clickstream-Analytics-Pipeline-on-AWS"
+    },
+    "tzing66/job_matching_agent": {
+      "description": "A small project i made to find better job recommendations",
+      "stars": 0,
+      "language": "Python",
+      "pushedAt": "2026-09-11T13:21:53Z",
+      "topics": [],
+      "url": "https://github.com/Tzing66/job_matching_agent"
+    },
+    "tzing66/solar-intensity-model": {
+      "description": null,
+      "stars": 0,
+      "language": "Jupyter Notebook",
+      "pushedAt": "2025-03-31T07:00:55Z",
+      "topics": [],
+      "url": "https://github.com/Tzing66/Solar-Intensity-Model"
+    },
+    "tzing66/mesa-transit-expansion-emissions-analysis": {
+      "description": null,
+      "stars": 0,
+      "language": "Jupyter Notebook",
+      "pushedAt": "2025-05-02T23:50:27Z",
+      "topics": [],
+      "url": "https://github.com/Tzing66/mesa-transit-expansion-emissions-analysis"
+    }
+  }
+}

@@ -1,0 +1,55 @@
+---
+import Icon from "./Icon.astro";
+import { site, contact } from "../content/site.config";
+
+const big = "inline-flex items-center gap-2.5 rounded-lg px-5 py-3 font-medium transition-colors";
+const ghost = `${big} border border-line bg-surface hover:border-accent`;
+---
+
+<p class="max-w-xl text-lg text-muted">{contact.blurb}</p>
+
+<div class="mt-8 flex flex-wrap items-center gap-2 rounded-xl border border-line bg-surface p-2 pl-4 sm:inline-flex">
+  <Icon name="mail" size={16} class="text-muted" />
+  <a href={`mailto:${site.email}`} class="font-mono text-sm hover:text-accent-ink">{site.email}</a>
+  <button
+    type="button"
+    data-copy-email={site.email}
+    class="ml-auto rounded-lg border border-line px-3 py-1.5 font-mono text-xs text-muted transition-colors hover:border-accent hover:text-fg"
+  >
+    <span data-label>copy</span>
+  </button>
+  <span class="sr-only" aria-live="polite" data-copy-status></span>
+</div>
+
+<div class="mt-6 flex flex-wrap gap-3">
+  <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer" class={`${big} bg-accent text-on-accent hover:brightness-110`}>
+    <Icon name="linkedin" /> LinkedIn
+  </a>
+  <a href={site.links.github} target="_blank" rel="noopener noreferrer" class={ghost}>
+    <Icon name="github" /> GitHub
+  </a>
+  <a href={site.links.resume} target="_blank" rel="noopener" class={ghost}>
+    <Icon name="file" /> View resume
+  </a>
+  <a href={site.links.resume} download={site.resumeDownloadName} class={ghost}>
+    <Icon name="download" /> Download PDF
+  </a>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-copy-email]").forEach((btn) => {
+    const label = btn.querySelector("[data-label]")!;
+    const status = btn.parentElement!.querySelector("[data-copy-status]")!;
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copyEmail!);
+        label.textContent = "copied ✓";
+        status.textContent = "Email address copied to clipboard";
+      } catch {
+        location.href = `mailto:${btn.dataset.copyEmail}`;
+        return;
+      }
+      setTimeout(() => (label.textContent = "copy"), 1800);
+    });
+  });
+</script>

@@ -1,0 +1,52 @@
+---
+import { experience, education } from "../content/site.config";
+---
+
+<ol class="relative space-y-6 border-l border-line pl-6 sm:pl-8">
+  {
+    experience.map((job) => (
+      <li class="relative">
+        <span class="absolute top-6 -left-[calc(1.5rem+5px)] size-2.5 rounded-full border-2 border-accent bg-bg sm:-left-[calc(2rem+5px)]" aria-hidden="true" />
+        <article class="rounded-xl border border-line bg-surface p-5 sm:p-6">
+          <p class="font-mono text-xs text-muted">
+            {job.period}
+            {job.location && ` · ${job.location}`}
+          </p>
+          <h3 class="mt-1.5 text-lg font-semibold tracking-tight">{job.role}</h3>
+          <p class="text-accent-ink">{job.company}</p>
+          {job.detail && <p class="text-sm text-muted">{job.detail}</p>}
+          {job.bullets.length > 0 && (
+            <ul class="mt-4 space-y-1.5 text-sm">
+              {job.bullets.map((b) => (
+                <li class="flex gap-2">
+                  <span class="text-accent-ink">›</span>
+                  {b}
+                </li>
+              ))}
+            </ul>
+          )}
+          {job.stack.length > 0 && (
+            <ul class="mt-4 flex flex-wrap gap-1.5" aria-label="Tech used">
+              {job.stack.map((s) => (
+                <li class="rounded border border-line px-2 py-0.5 font-mono text-[11px] text-muted">{s}</li>
+              ))}
+            </ul>
+          )}
+        </article>
+      </li>
+    ))
+  }
+</ol>
+
+<h3 class="mt-14 mb-4 font-mono text-xs tracking-wide text-muted">// education</h3>
+<ul class="grid gap-4 sm:grid-cols-2">
+  {
+    education.map((e) => (
+      <li class="rounded-xl border border-line bg-surface p-5">
+        {e.period && <p class="font-mono text-xs text-muted">{e.period}</p>}
+        <p class="font-semibold">{e.degree}</p>
+        <p class="text-sm text-muted">{e.school}</p>
+      </li>
+    ))
+  }
+</ul>

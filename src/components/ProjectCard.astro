@@ -1,0 +1,119 @@
+---
+import Icon from "./Icon.astro";
+import type { Project } from "../content/site.config";
+import { repoStats, timeAgo } from "../lib/github";
+
+interface Props {
+  project: Project;
+  hasWriteup: boolean;
+}
+const { project: p, hasWriteup } = Astro.props;
+const stats = repoStats(p.repo);
+const title = p.title ?? p.repo.split("/")[1];
+const tagline = p.tagline || stats?.description || "";
+const repoUrl = stats?.url ?? `https://github.com/${p.repo}`;
+
+const statusStyle: Record<string, string> = {
+  live: "border-accent/50 text-accent-ink",
+  building: "border-line text-fg",
+  complete: "border-line text-muted",
+  archived: "border-line text-muted",
+};
+const link = "relative z-10 inline-flex items-center gap-1.5 font-mono text-xs text-muted transition-colors hover:text-accent-ink";
+---
+
+<li
+  data-project-card
+  data-tags={(p.tags ?? []).join("|")}
+  class:list={[
+    "group relative flex flex-col overflow-hidden rounded-xl border border-line bg-surface transition-colors hover:border-accent/60",
+    p.featured && "md:col-span-2 md:grid md:grid-cols-[1.15fr_1fr]",
+  ]}
+>
+  {
+    p.featured && (
+      <div class="relative aspect-[16/10] overflow-hidden border-b border-line bg-bg md:order-2 md:aspect-auto md:border-b-0 md:border-l">
+        {p.image ? (
+          <img
+            src={p.image}
+            alt={`Screenshot of ${title}`}
+            loading="lazy"
+            decoding="async"
+            width="1200"
+            height="825"
+            class="absolute inset-0 size-full object-cover object-top"
+          />
+        ) : (
+          // No screenshot: draw the project's stack as a tiny pipeline instead.
+          <div class="absolute inset-0 flex flex-col justify-center gap-2 p-6 font-mono text-xs text-muted" aria-hidden="true">
+            {(p.stack ?? []).slice(0, 5).map((s, i) => (
+              <div class="flex items-center gap-2" style={`padding-left:${i * 14}px`}>
+                <span class="text-accent-ink">{i === 0 ? "▸" : "└▸"}</span>
+                <span class="rounded border border-line bg-surface px-2 py-1 text-fg">{s}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  <div class="flex flex-1 flex-col p-5 sm:p-6">
+    <div class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-muted">
+      {p.status && <span class:list={["rounded-full border px-2 py-0.5 uppercase tracking-wider", statusStyle[p.status]]}>{p.status}</span>}
+      {stats?.language && <span>{stats.language}</span>}
+      {stats && <span aria-label={`${stats.stars} stars`}>★ {stats.stars}</span>}
+      {stats?.pushedAt && <span>updated {timeAgo(stats.pushedAt)}</span>}
+    </div>
+
+    <h3 class:list={["font-semibold tracking-tight", p.featured ? "text-2xl" : "text-lg"]}>
+      {
+        hasWriteup ? (
+          <button type="button" data-open-project={p.slug} class="text-left after:absolute after:inset-0 after:content-['']">
+            {title}
+          </button>
+        ) : (
+          title
+        )
+      }
+    </h3>
+    {tagline && <p class="mt-1.5 text-sm text-muted">{tagline}</p>}
+
+    {
+      p.featured && p.highlights?.length ? (
+        <ul class="mt-4 space-y-1.5 text-sm">
+          {p.highlights.map((h) => (
+            <li class="flex gap-2">
+              <span class="text-accent-ink">›</span>
+              {h}
+            </li>
+          ))}
+        </ul>
+      ) : null
+    }
+
+    {
+      p.stack?.length ? (
+        <ul class="mt-4 flex flex-wrap gap-1.5" aria-label="Tech stack">
+          {p.stack.map((s) => (
+            <li class="rounded border border-line px-2 py-0.5 font-mono text-[11px] text-muted">{s}</li>
+          ))}
+        </ul>
+      ) : null
+    }
+
+    <div class="mt-auto flex flex-wrap gap-4 pt-5">
+      <a href={repoUrl} target="_blank" rel="noopener noreferrer" class={link}>
+        <Icon name="github" size={14} /> Repo
+      </a>
+      {
+        p.demo && (
+          <a href={p.demo} target="_blank" rel="noopener noreferrer" class={link}>
+            ↗ Live demo
+          </a>
+        )
+      }
+      {hasWriteup && <span class="font-mono text-xs text-muted" aria-hidden="true">Details →</span>}
+    </div>
+  </div>
+</li>

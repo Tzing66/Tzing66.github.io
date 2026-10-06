@@ -14,7 +14,7 @@ const btn =
     {site.name}
   </h1>
   <p class="mt-4 font-mono text-sm text-accent-ink sm:text-base">{site.role}</p>
-  <p class="mt-6 max-w-xl text-lg text-muted">{site.pitch}</p>
+  {site.pitch && <p class="mt-6 max-w-xl text-lg text-muted">{site.pitch}</p>}
 
   <div class="mt-10 flex flex-wrap gap-3">
     <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer" class:list={[btn, "border-accent bg-accent text-on-accent hover:brightness-110"]}>
