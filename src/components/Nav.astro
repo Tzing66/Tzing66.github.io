@@ -1,0 +1,150 @@
+---
+import Icon from "./Icon.astro";
+import { site, sections } from "../content/site.config";
+
+const initials = site.name
+  .split(" ")
+  .map((w) => w[0])
+  .join("");
+---
+
+<header
+  id="site-nav"
+  class="fixed inset-x-0 top-0 z-50 border-b border-transparent transition-[background-color,border-color] duration-300 data-[scrolled]:border-line data-[scrolled]:bg-bg/75 data-[scrolled]:backdrop-blur-md"
+>
+  <nav class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6" aria-label="Primary">
+    <a href="#home" class="group flex items-center gap-2 font-mono text-sm font-semibold tracking-tight">
+      <span
+        class="grid size-8 place-items-center rounded-md border border-line bg-surface text-accent-ink transition-colors group-hover:border-accent"
+        >{initials}</span
+      >
+      <span class="hidden sm:inline">{site.nickname}</span>
+    </a>
+
+    <ul class="hidden items-center gap-1 md:flex">
+      {
+        sections.map((s) => (
+          <li>
+            <a
+              href={`#${s.id}`}
+              data-nav-link={s.id}
+              class="rounded-md px-3 py-1.5 text-sm text-muted transition-colors hover:text-fg aria-[current=true]:text-fg"
+            >
+              {s.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="flex items-center gap-1">
+      <a
+        href={site.links.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="GitHub"
+        class="grid size-9 place-items-center rounded-md text-muted transition-colors hover:text-fg"
+      >
+        <Icon name="github" />
+      </a>
+      <a
+        href={site.links.linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="LinkedIn"
+        class="grid size-9 place-items-center rounded-md text-muted transition-colors hover:text-fg"
+      >
+        <Icon name="linkedin" />
+      </a>
+      <button
+        type="button"
+        data-theme-toggle
+        aria-label="Toggle color theme"
+        class="grid size-9 place-items-center rounded-md text-muted transition-colors hover:text-fg"
+      >
+        <Icon name="sun" class="hidden [[data-theme=dark]_&]:block" />
+        <Icon name="moon" class="hidden [[data-theme=light]_&]:block" />
+      </button>
+      <button
+        type="button"
+        id="menu-open"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        class="grid size-9 place-items-center rounded-md text-muted hover:text-fg md:hidden"
+      >
+        <Icon name="menu" size={20} />
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- Mobile full-screen menu -->
+<div
+  id="mobile-menu"
+  class="fixed inset-0 z-[60] hidden flex-col bg-bg/95 px-6 backdrop-blur-lg data-[open]:flex md:hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Site menu"
+>
+  <div class="flex h-16 items-center justify-end">
+    <button
+      type="button"
+      id="menu-close"
+      aria-label="Close menu"
+      class="grid size-9 place-items-center rounded-md text-muted hover:text-fg"
+    >
+      <Icon name="close" size={20} />
+    </button>
+  </div>
+  <ul class="mt-6 flex flex-col gap-2">
+    {
+      sections.map((s, i) => (
+        <li>
+          <a href={`#${s.id}`} class="flex items-baseline gap-4 py-2 text-3xl font-semibold tracking-tight">
+            <span class="font-mono text-xs text-accent-ink">{String(i + 1).padStart(2, "0")}</span>
+            {s.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  // Nav background once the page is scrolled (sentinel, not a scroll listener).
+  const nav = document.getElementById("site-nav")!;
+  const sentinel = document.createElement("div");
+  sentinel.style.cssText = "position:absolute;top:0;height:8px;width:1px;";
+  document.body.prepend(sentinel);
+  new IntersectionObserver(([e]) => nav.toggleAttribute("data-scrolled", !e.isIntersecting)).observe(sentinel);
+
+  // Theme toggle.
+  document.querySelectorAll("[data-theme-toggle]").forEach((btn) =>
+    btn.addEventListener("click", () => {
+      const root = document.documentElement;
+      const next = root.dataset.theme === "light" ? "dark" : "light";
+      root.dataset.theme = next;
+      try {
+        localStorage.setItem("theme", next);
+      } catch {}
+    }),
+  );
+
+  // Mobile menu.
+  const menu = document.getElementById("mobile-menu")!;
+  const openBtn = document.getElementById("menu-open")!;
+  const closeBtn = document.getElementById("menu-close")!;
+  const setOpen = (open: boolean) => {
+    menu.toggleAttribute("data-open", open);
+    openBtn.setAttribute("aria-expanded", String(open));
+    document.body.style.overflow = open ? "hidden" : "";
+    (open ? closeBtn : openBtn).focus();
+  };
+  openBtn.addEventListener("click", () => setOpen(true));
+  closeBtn.addEventListener("click", () => setOpen(false));
+  menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && menu.hasAttribute("data-open")) setOpen(false);
+  });
+</script>

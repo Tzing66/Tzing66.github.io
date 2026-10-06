@@ -1,0 +1,46 @@
+---
+import "../styles/global.css";
+import { site } from "../content/site.config";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title = `${site.name} — ${site.role}`, description = site.pitch } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, site.url)} />
+    <!-- Apply the saved theme before first paint to avoid a flash. -->
+    <script is:inline>
+      try {
+        const t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+      } catch {}
+      // Deep links (/#projects): re-anchor once fonts/layout settle, then turn on smooth scrolling.
+      addEventListener("load", () => {
+        const target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+        if (target) target.scrollIntoView();
+        requestAnimationFrame(() => document.documentElement.setAttribute("data-smooth", ""));
+      });
+    </script>
+  </head>
+  <body class="min-h-dvh overflow-x-clip">
+    <div class="texture" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-accent focus:px-3 focus:py-2 focus:text-on-accent"
+      >Skip to content</a
+    >
+    <slot />
+  </body>
+</html>
