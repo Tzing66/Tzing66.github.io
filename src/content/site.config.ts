@@ -189,7 +189,7 @@ export const currently = [
 // Listening data for the Now section, fetched at build time from Last.fm (see scripts/fetch-lastfm.ts).
 // Leave lastfmUser empty to hide the card.
 export const music = {
-  lastfmUser: "", // TODO(Tanz): your Last.fm username
+  lastfmUser: "tanzinii",
 };
 
 // Extra small cards for the Now bento grid (a book, a game, gym stats…). Empty = none shown.
