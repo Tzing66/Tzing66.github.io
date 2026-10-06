@@ -1,36 +1,45 @@
 ---
 import Icon from "./Icon.astro";
+import PipelineDag from "./PipelineDag.astro";
 import { site } from "../content/site.config";
 
 const btn =
   "inline-flex items-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors";
 ---
 
-<section id="home" aria-label="Introduction" class="relative mx-auto flex min-h-dvh max-w-6xl flex-col justify-center px-4 pt-16 sm:px-6">
-  <p class="mb-5 font-mono text-xs tracking-wide text-muted">
-    <span class="text-accent-ink">●</span> {site.location}
-  </p>
-  <h1 class="text-5xl font-semibold tracking-tight sm:text-7xl">
-    {site.name}
-  </h1>
-  <p class="mt-4 font-mono text-sm text-accent-ink sm:text-base">{site.role}</p>
-  {site.pitch && <p class="mt-6 max-w-xl text-lg text-muted">{site.pitch}</p>}
+<section
+  id="home"
+  aria-label="Introduction"
+  class="relative mx-auto grid min-h-dvh max-w-6xl content-center items-center gap-12 px-4 pt-20 pb-24 sm:px-6 lg:grid-cols-[1fr_auto] lg:pt-16"
+>
+  <div>
+    <p class="mb-5 font-mono text-xs tracking-wide text-muted">
+      <span class="text-accent-ink">●</span> {site.location}
+    </p>
+    <h1 class="text-5xl font-semibold tracking-tight sm:text-7xl">
+      {site.name}
+    </h1>
+    <p class="mt-4 font-mono text-sm text-accent-ink sm:text-base">{site.role}</p>
+    {site.pitch && <p class="mt-6 max-w-xl text-lg text-muted">{site.pitch}</p>}
 
-  <div class="mt-10 flex flex-wrap gap-3">
-    <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer" class:list={[btn, "border-accent bg-accent text-on-accent hover:brightness-110"]}>
-      <Icon name="linkedin" size={16} /> LinkedIn
-    </a>
-    <a href={site.links.github} target="_blank" rel="noopener noreferrer" class:list={[btn, "border-line bg-surface hover:border-accent"]}>
-      <Icon name="github" size={16} /> GitHub
-    </a>
-    <a href={site.links.resume} target="_blank" rel="noopener" class:list={[btn, "border-line bg-surface hover:border-accent"]}>
-      <Icon name="file" size={16} /> Resume
-    </a>
+    <div class="mt-10 flex flex-wrap gap-3">
+      <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer" class:list={[btn, "border-accent bg-accent text-on-accent hover:brightness-110"]}>
+        <Icon name="linkedin" size={16} /> LinkedIn
+      </a>
+      <a href={site.links.github} target="_blank" rel="noopener noreferrer" class:list={[btn, "border-line bg-surface hover:border-accent"]}>
+        <Icon name="github" size={16} /> GitHub
+      </a>
+      <a href={site.links.resume} target="_blank" rel="noopener" class:list={[btn, "border-line bg-surface hover:border-accent"]}>
+        <Icon name="file" size={16} /> Resume
+      </a>
+    </div>
   </div>
+
+  <PipelineDag />
 
   <a
     href="#about"
-    class="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 font-mono text-xs text-muted hover:text-fg"
+    class="absolute bottom-6 left-1/2 hidden -translate-x-1/2 sm:flex flex-col items-center gap-2 font-mono text-xs text-muted hover:text-fg"
   >
     scroll
     <Icon name="arrow-down" size={16} />

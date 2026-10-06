@@ -8,6 +8,7 @@ import Timeline from "../components/Timeline.astro";
 import Projects from "../components/Projects.astro";
 import StackGrid from "../components/StackGrid.astro";
 import Contact from "../components/Contact.astro";
+import ProgressRail from "../components/ProgressRail.astro";
 import { about, currently } from "../content/site.config";
 
 const card = "rounded-xl border border-line bg-surface p-5";
@@ -15,18 +16,19 @@ const card = "rounded-xl border border-line bg-surface p-5";
 
 <Layout>
   <Nav />
+  <ProgressRail />
   <main id="main">
     <Hero />
 
     <Section id="about">
       {
         about.paragraphs.length > 0 && (
-          <div class="max-w-2xl space-y-4 text-lg text-muted">
+          <div data-stagger class="max-w-2xl space-y-4 text-lg text-muted">
             {about.paragraphs.map((p) => <p>{p}</p>)}
           </div>
         )
       }
-      <ul class="mt-8 flex flex-wrap gap-2">
+      <ul data-stagger class="mt-8 flex flex-wrap gap-2">
         {about.facts.map((f) => <li class="rounded-full border border-line bg-surface px-3 py-1 text-sm">{f}</li>)}
       </ul>
     </Section>
@@ -44,7 +46,7 @@ const card = "rounded-xl border border-line bg-surface p-5";
     </Section>
 
     <Section id="now">
-      <div class={card}>
+      <div data-reveal class={card}>
         <h3 class="mb-3 font-mono text-xs tracking-wide text-muted">Currently</h3>
         <ul class="space-y-1">{currently.map((c) => <li>{c}</li>)}</ul>
       </div>

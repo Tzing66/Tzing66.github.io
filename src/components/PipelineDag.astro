@@ -1,0 +1,119 @@
+---
+// Hero DAG: the page sections as a tiny pipeline, with "data" dots flowing along the edges.
+// Pure SVG + SMIL: renders and animates with zero JS. Reduced motion hides the dots (CSS).
+import { sections } from "../content/site.config";
+
+// Layout only (not content): node centres in a 360×440 viewBox, keyed by section id.
+const pos: Record<string, [number, number]> = {
+  about: [180, 28],
+  experience: [180, 118],
+  projects: [92, 208],
+  stack: [268, 208],
+  now: [180, 298],
+  contact: [180, 388],
+};
+// [from, to, arrival time as a fraction of the cycle]
+const edges: [string, string, number, number][] = [
+  ["about", "experience", 0.04, 0.2],
+  ["experience", "projects", 0.24, 0.44],
+  ["experience", "stack", 0.24, 0.44],
+  ["projects", "now", 0.48, 0.68],
+  ["stack", "now", 0.48, 0.68],
+  ["now", "contact", 0.72, 0.88],
+];
+const PERIOD = "4.8s";
+const W = 124;
+const H = 36;
+
+const nodes = sections
+  .map((s, i) => ({ ...s, n: String(i + 1).padStart(2, "0"), at: pos[s.id] }))
+  .filter((s) => s.at);
+
+const edgePath = (a: string, b: string) => {
+  const [x1, y1] = pos[a];
+  const [x2, y2] = pos[b];
+  const sy = y1 + H / 2;
+  const ey = y2 - H / 2;
+  const my = (sy + ey) / 2;
+  return `M${x1} ${sy} C${x1} ${my}, ${x2} ${my}, ${x2} ${ey}`;
+};
+
+// When each node "receives" data during the cycle, for its glow pulse.
+const arrival: Record<string, number> = { about: 0 };
+for (const [, to, , end] of edges) arrival[to] = end;
+
+const clamp = (t: number) => Math.min(Math.max(t, 0), 1).toFixed(3);
+---
+
+<nav aria-label="Section pipeline" class="hidden lg:block">
+  <svg viewBox="0 0 360 416" width="360" height="416" class="overflow-visible">
+    {
+      edges.map(([a, b], i) => (
+        <path id={`dag-edge-${i}`} class="dag-edge" d={edgePath(a, b)} />
+      ))
+    }
+
+    {
+      edges.map(([, , start, end], i) => (
+        <circle class="dag-dot" r="3" opacity="0">
+          <animateMotion
+            dur={PERIOD}
+            repeatCount="indefinite"
+            calcMode="linear"
+            keyPoints="0;0;1;1"
+            keyTimes={`0;${clamp(start)};${clamp(end)};1`}
+          >
+            <mpath href={`#dag-edge-${i}`} />
+          </animateMotion>
+          <animate
+            attributeName="opacity"
+            dur={PERIOD}
+            repeatCount="indefinite"
+            values="0;0;1;1;0;0"
+            keyTimes={`0;${clamp(start)};${clamp(start + 0.02)};${clamp(end - 0.02)};${clamp(end)};1`}
+          />
+        </circle>
+      ))
+    }
+
+    {
+      nodes.map((s) => {
+        const [cx, cy] = s.at;
+        const t = arrival[s.id] ?? 0;
+        return (
+          <a href={`#${s.id}`} class="dag-node" aria-label={`${s.label} section`}>
+            <rect class="dag-box" x={cx - W / 2} y={cy - H / 2} width={W} height={H} rx="8" />
+            <rect class="dag-glow" x={cx - W / 2} y={cy - H / 2} width={W} height={H} rx="8">
+              <animate
+                attributeName="opacity"
+                dur={PERIOD}
+                repeatCount="indefinite"
+                values="0;0;1;0;0"
+                keyTimes={`0;${clamp(t)};${clamp(t + 0.02)};${clamp(t + 0.14)};1`}
+              />
+            </rect>
+            <text x={cx} y={cy + 4} text-anchor="middle">
+              <tspan class="dag-idx">{s.n}</tspan> {s.id}
+            </text>
+          </a>
+        );
+      })
+    }
+  </svg>
+</nav>
+
+<!-- Phones: the same pipeline collapsed into a vertical line of nodes. -->
+<nav aria-label="Section pipeline" class="lg:hidden">
+  <ol class="relative ml-1 space-y-2.5 border-l border-line pl-5 font-mono text-xs">
+    {
+      nodes.map((s) => (
+        <li class="relative">
+          <span class="absolute top-1/2 -left-[23.5px] size-1.5 -translate-y-1/2 rounded-full bg-accent" aria-hidden="true" />
+          <a href={`#${s.id}`} class="text-muted hover:text-fg">
+            <span class="text-accent-ink">{s.n}</span> {s.id}
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</nav>

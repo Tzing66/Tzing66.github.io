@@ -19,3 +19,5 @@ Personal portfolio for Tanmay "Tanz" Singh. Astro (static) + Tailwind v4 + React
 - Theme tokens are CSS variables in `src/styles/global.css`, exposed to Tailwind via `@theme inline` (`bg-bg`, `text-muted`, `text-accent-ink`, …). Use `accent-ink` for accent-colored text so light mode keeps contrast.
 - `npm run fetch` refreshes `src/data/*.json` (committed as the offline fallback). Scripts are plain `.ts` run by Node's built-in type stripping (Node ≥ 22.18), no tsx.
 - Projects: allowlist + card copy in `site.config.ts` (`slug` links to `src/content/projects/<slug>.md`); modals are native `<dialog>` in `Projects.astro`, deep-linkable as `#projects/<slug>`.
+- Motion: add `data-reveal` (one element) or `data-stagger` (each direct child) and `src/lib/reveal.ts` handles it; `--i` sets the stagger step. Only animate transform/opacity, and keep a `prefers-reduced-motion` override in `global.css`. Don't put `data-reveal` and a hover transform on the same element (see ProjectCard's li/article split).
+- Scroll-driven CSS (`animation-timeline`): write longhands with the timeline in its own rule; Lightning CSS otherwise collapses them into `animation: none`.

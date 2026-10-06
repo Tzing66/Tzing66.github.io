@@ -6,9 +6,9 @@ const big = "inline-flex items-center gap-2.5 rounded-lg px-5 py-3 font-medium t
 const ghost = `${big} border border-line bg-surface hover:border-accent`;
 ---
 
-<p class="max-w-xl text-lg text-muted">{contact.blurb}</p>
+<p data-reveal class="max-w-xl text-lg text-muted">{contact.blurb}</p>
 
-<div class="mt-8 flex flex-wrap items-center gap-2 rounded-xl border border-line bg-surface p-2 pl-4 sm:inline-flex">
+<div data-reveal style="--i:1" class="mt-8 flex flex-wrap items-center gap-2 rounded-xl border border-line bg-surface p-2 pl-4 sm:inline-flex">
   <Icon name="mail" size={16} class="text-muted" />
   <a href={`mailto:${site.email}`} class="font-mono text-sm hover:text-accent-ink">{site.email}</a>
   <button
@@ -21,7 +21,7 @@ const ghost = `${big} border border-line bg-surface hover:border-accent`;
   <span class="sr-only" aria-live="polite" data-copy-status></span>
 </div>
 
-<div class="mt-6 flex flex-wrap gap-3">
+<div data-stagger class="mt-6 flex flex-wrap gap-3">
   <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer" class={`${big} bg-accent text-on-accent hover:brightness-110`}>
     <Icon name="linkedin" /> LinkedIn
   </a>

@@ -17,7 +17,7 @@ const modals = await Promise.all(
 
 {
   tags.length > 1 && (
-    <div class="mb-6 flex flex-wrap gap-2" role="group" aria-label="Filter projects">
+    <div data-reveal class="mb-6 flex flex-wrap gap-2" role="group" aria-label="Filter projects">
       {["All", ...tags].map((t) => (
         <button
           type="button"
@@ -32,7 +32,7 @@ const modals = await Promise.all(
   )
 }
 
-<ul class="grid gap-4 md:grid-cols-2">
+<ul data-stagger class="grid gap-4 md:grid-cols-2">
   {projects.map((p) => <ProjectCard project={p} hasWriteup={writeups.has(p.slug)} />)}
 </ul>
 

@@ -185,3 +185,132 @@ html:has(dialog[open]) {
   color: var(--fg);
   font-weight: 600;
 }
+
+/* ───────────── Motion ─────────────
+   Snappy, not floaty: 150–450ms, ease-out on enter, transform/opacity only.
+   html.js is set inline before paint, so without JS nothing is ever hidden. */
+:root {
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+  transition:
+    opacity 380ms var(--ease-out),
+    transform 380ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 50ms);
+}
+/* Re-entry after the first reveal is lighter and quicker. */
+html.js [data-reveal][data-seen]:not(.is-visible) {
+  transform: translate3d(0, 6px, 0);
+  transition-duration: 250ms;
+}
+html.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hover lift for cards: spring-ish, transform + shadow only. */
+.lift {
+  transition:
+    transform 260ms var(--ease-spring),
+    box-shadow 260ms var(--ease-out),
+    border-color 200ms var(--ease-out);
+}
+.lift:hover {
+  transform: translate3d(0, -3px, 0);
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent),
+    0 12px 40px -12px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.lift .lift-zoom {
+  transition: transform 450ms var(--ease-out);
+}
+.lift:hover .lift-zoom {
+  transform: scale(1.035);
+}
+
+/* Scroll progress: CSS scroll-driven animation, with a JS --scroll fallback. */
+@keyframes progress-y {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@keyframes progress-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+/* Longhands only, timeline in its own rule: Lightning CSS otherwise folds these into
+   an `animation` shorthand and drops the timeline (it emitted `animation: none`). */
+.progress-y { transform-origin: top; animation-name: progress-y; }
+.progress-x { transform-origin: left; animation-name: progress-x; }
+.progress-y,
+.progress-x {
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+:is(.progress-y, .progress-x) {
+  animation-timeline: scroll(root block);
+}
+.no-scroll-timeline .progress-y { animation: none; transform: scaleY(var(--scroll, 0)); }
+.no-scroll-timeline .progress-x { animation: none; transform: scaleX(var(--scroll, 0)); }
+
+/* Pipeline DAG in the hero. */
+.dag-node rect.dag-box {
+  fill: var(--surface);
+  stroke: var(--line);
+  transition: stroke 200ms var(--ease-out);
+}
+.dag-node:hover rect.dag-box,
+.dag-node:focus-visible rect.dag-box {
+  stroke: var(--accent);
+}
+.dag-node:focus-visible {
+  outline: none;
+}
+.dag-node text {
+  fill: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.dag-node text .dag-idx {
+  fill: var(--accent-ink);
+}
+.dag-edge {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.25;
+}
+.dag-dot {
+  fill: var(--accent);
+}
+.dag-glow {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No movement: reveals become a quick fade, hovers don't move, the DAG is static. */
+  html.js [data-reveal],
+  html.js [data-reveal][data-seen]:not(.is-visible) {
+    transform: none;
+    transition: opacity 150ms linear;
+    transition-delay: 0ms;
+  }
+  .lift,
+  .lift .lift-zoom {
+    transition: border-color 150ms linear, box-shadow 150ms linear;
+  }
+  .lift:hover,
+  .lift:hover .lift-zoom {
+    transform: none;
+  }
+  .dag-dot,
+  .dag-glow {
+    display: none;
+  }
+}

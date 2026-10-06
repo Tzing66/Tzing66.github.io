@@ -22,12 +22,12 @@ const statusStyle: Record<string, string> = {
 const link = "relative z-10 inline-flex items-center gap-1.5 font-mono text-xs text-muted transition-colors hover:text-accent-ink";
 ---
 
-<li
-  data-project-card
-  data-tags={(p.tags ?? []).join("|")}
+<!-- li = grid placement + scroll reveal; article = hover lift (kept separate so their transforms don't fight). -->
+<li data-project-card data-tags={(p.tags ?? []).join("|")} class:list={[p.featured && "md:col-span-2"]}>
+<article
   class:list={[
-    "group relative flex flex-col overflow-hidden rounded-xl border border-line bg-surface transition-colors hover:border-accent/60",
-    p.featured && "md:col-span-2 md:grid md:grid-cols-[1.15fr_1fr]",
+    "lift group relative flex h-full flex-col overflow-hidden rounded-xl border border-line bg-surface",
+    p.featured && "md:grid md:grid-cols-[1.15fr_1fr]",
   ]}
 >
   {
@@ -41,11 +41,11 @@ const link = "relative z-10 inline-flex items-center gap-1.5 font-mono text-xs t
             decoding="async"
             width="1200"
             height="825"
-            class="absolute inset-0 size-full object-cover object-top"
+            class="lift-zoom absolute inset-0 size-full object-cover object-top"
           />
         ) : (
           // No screenshot: draw the project's stack as a tiny pipeline instead.
-          <div class="absolute inset-0 flex flex-col justify-center gap-2 p-6 font-mono text-xs text-muted" aria-hidden="true">
+          <div class="lift-zoom absolute inset-0 flex flex-col justify-center gap-2 p-6 font-mono text-xs text-muted" aria-hidden="true">
             {(p.stack ?? []).slice(0, 5).map((s, i) => (
               <div class="flex items-center gap-2" style={`padding-left:${i * 14}px`}>
                 <span class="text-accent-ink">{i === 0 ? "▸" : "└▸"}</span>
@@ -116,4 +116,5 @@ const link = "relative z-10 inline-flex items-center gap-1.5 font-mono text-xs t
       {hasWriteup && <span class="font-mono text-xs text-muted" aria-hidden="true">Details →</span>}
     </div>
   </div>
+</article>
 </li>

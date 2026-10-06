@@ -11,9 +11,9 @@ const { label, stage } = sections[index];
 ---
 
 <section id={id} aria-labelledby={`${id}-title`} class:list={["mx-auto max-w-6xl px-4 py-24 sm:px-6 sm:py-32", className]}>
-  <p class="mb-3 font-mono text-xs tracking-wide text-muted">
+  <p data-reveal class="mb-3 font-mono text-xs tracking-wide text-muted">
     <span class="text-accent-ink">{String(index + 1).padStart(2, "0")}</span> / {stage}
   </p>
-  <h2 id={`${id}-title`} class="mb-10 text-4xl font-semibold tracking-tight sm:text-5xl">{label}</h2>
+  <h2 data-reveal style="--i:1" id={`${id}-title`} class="mb-10 text-4xl font-semibold tracking-tight sm:text-5xl">{label}</h2>
   <slot />
 </section>

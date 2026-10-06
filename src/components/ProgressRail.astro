@@ -1,0 +1,52 @@
+---
+import { sections } from "../content/site.config";
+---
+
+<!-- Desktop (xl+): vertical rail on the left; each dot sits where its section starts. -->
+<nav aria-label="Page progress" class="fixed top-28 bottom-16 left-7 z-40 hidden w-3 xl:block">
+  <div class="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-line" aria-hidden="true"></div>
+  <div class="progress-y absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-accent" aria-hidden="true"></div>
+  <ol>
+    {
+      sections.map((s, i) => (
+        <li class="absolute left-1/2 -translate-x-1/2 -translate-y-1/2" data-rail-dot={s.id} style={`top:${(i / (sections.length - 1)) * 100}%`}>
+          <a
+            href={`#${s.id}`}
+            data-spy={s.id}
+            class="group/dot relative grid size-5 place-items-center"
+          >
+            <span
+              class="size-2 rounded-full border border-line bg-bg transition-[background-color,border-color,transform] duration-200 group-hover/dot:scale-125 group-hover/dot:border-accent group-aria-[current=location]/dot:scale-125 group-aria-[current=location]/dot:border-accent group-aria-[current=location]/dot:bg-accent"
+            ></span>
+            <span
+              class="pointer-events-none absolute left-6 whitespace-nowrap rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[11px] text-fg opacity-0 transition-opacity duration-150 group-hover/dot:opacity-100 group-focus-visible/dot:opacity-100"
+            >
+              {String(i + 1).padStart(2, "0")} {s.label}
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<!-- Below xl: a thin progress bar pinned to the top edge. -->
+<div class="progress-x fixed inset-x-0 top-0 z-[55] h-0.5 bg-accent xl:hidden" aria-hidden="true"></div>
+
+<script>
+  // Place each rail dot at the scroll fraction where its section starts,
+  // so the fill line reaches a dot exactly as that section arrives.
+  const dots = document.querySelectorAll<HTMLElement>("[data-rail-dot]");
+  const NAV_OFFSET = 72;
+  function place() {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    if (max <= 0) return;
+    dots.forEach((dot) => {
+      const sec = document.getElementById(dot.dataset.railDot!);
+      if (!sec) return;
+      const top = sec.getBoundingClientRect().top + scrollY - NAV_OFFSET;
+      dot.style.top = `${Math.min(Math.max(top / max, 0), 1) * 100}%`;
+    });
+  }
+  new ResizeObserver(place).observe(document.body);
+</script>

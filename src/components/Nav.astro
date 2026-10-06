@@ -8,11 +8,16 @@ const initials = site.name
   .join("");
 ---
 
-<header
-  id="site-nav"
-  class="fixed inset-x-0 top-0 z-50 border-b border-transparent transition-[background-color,border-color] duration-300 data-[scrolled]:border-line data-[scrolled]:bg-bg/75 data-[scrolled]:backdrop-blur-md"
->
-  <nav class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6" aria-label="Primary">
+<header id="site-nav" class="group/nav fixed inset-x-0 top-0 z-50">
+  <!-- Background layer: fades in and shrinks (scaleY) once scrolled; transform/opacity only. -->
+  <div
+    class="absolute inset-0 origin-top border-b border-line bg-bg/75 opacity-0 backdrop-blur-md transition-[opacity,transform] duration-300 ease-out group-data-[scrolled]/nav:scale-y-[0.875] group-data-[scrolled]/nav:opacity-100"
+    aria-hidden="true"
+  ></div>
+  <nav
+    class="relative mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 transition-transform duration-300 ease-out group-data-[scrolled]/nav:-translate-y-1 sm:px-6"
+    aria-label="Primary"
+  >
     <a href="#home" class="group flex items-center gap-2 font-mono text-sm font-semibold tracking-tight">
       <span
         class="grid size-8 place-items-center rounded-md border border-line bg-surface text-accent-ink transition-colors group-hover:border-accent"
@@ -28,9 +33,14 @@ const initials = site.name
             <a
               href={`#${s.id}`}
               data-nav-link={s.id}
-              class="rounded-md px-3 py-1.5 text-sm text-muted transition-colors hover:text-fg aria-[current=true]:text-fg"
+              data-spy={s.id}
+              class="relative rounded-md px-3 py-1.5 text-sm text-muted transition-colors hover:text-fg aria-[current=location]:text-fg"
             >
               {s.label}
+              <span
+                class="absolute inset-x-3 -bottom-px h-px origin-left scale-x-0 bg-accent transition-transform duration-300 ease-out [[aria-current=location]>&]:scale-x-100"
+                aria-hidden="true"
+              />
             </a>
           </li>
         ))

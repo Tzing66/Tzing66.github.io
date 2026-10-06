@@ -21,6 +21,7 @@ const { title = `${site.name} — ${site.role}`, description = site.pitch } = As
     <link rel="canonical" href={new URL(Astro.url.pathname, site.url)} />
     <!-- Apply the saved theme before first paint to avoid a flash. -->
     <script is:inline>
+      document.documentElement.classList.add("js");
       try {
         const t = localStorage.getItem("theme");
         if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
@@ -42,5 +43,12 @@ const { title = `${site.name} — ${site.role}`, description = site.pitch } = As
       >Skip to content</a
     >
     <slot />
+    <script>
+      import { initReveal, initScrollSpy, initProgressFallback } from "../lib/reveal";
+      import { sections } from "../content/site.config";
+      initReveal();
+      initScrollSpy(sections.map((s) => s.id));
+      initProgressFallback();
+    </script>
   </body>
 </html>
