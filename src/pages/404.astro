@@ -1,0 +1,52 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Icon from "../components/Icon.astro";
+import { site, sections } from "../content/site.config";
+---
+
+<Layout title={`404 — ${site.name}`} noindex>
+  <main id="main" class="mx-auto flex min-h-dvh max-w-6xl flex-col justify-center px-4 py-24 sm:px-6">
+    <p class="mb-3 font-mono text-xs tracking-wide text-muted">
+      <span class="text-accent-ink">ERR 404</span> / route not found
+    </p>
+    <h1 class="text-5xl font-semibold tracking-tight sm:text-6xl">This page fell out of the pipeline.</h1>
+    <p class="mt-5 max-w-xl text-lg text-muted">
+      Whatever you were looking for never made it to the sink. Everything that did is on the home page.
+    </p>
+
+    <pre class="mt-8 max-w-xl overflow-x-auto rounded-xl border border-line bg-surface p-4 font-mono text-xs leading-relaxed text-muted"><span
+        class="text-accent-ink">$</span> curl -I <span class="text-fg" data-path>/this-page</span>
+HTTP/2 404
+x-pipeline-stage: unknown
+x-suggestion: try one of the stages below</pre>
+
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="/#home" class="inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-3 font-medium text-on-accent hover:brightness-110">
+        ← Back to home
+      </a>
+      <a href={site.links.github} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-line bg-surface px-5 py-3 font-medium hover:border-accent">
+        <Icon name="github" /> GitHub
+      </a>
+    </div>
+
+    <nav aria-label="Sections" class="mt-12">
+      <ul class="flex flex-wrap gap-2 font-mono text-xs">
+        {
+          sections.map((s, i) => (
+            <li>
+              <a href={`/#${s.id}`} class="inline-block rounded-md border border-line px-2.5 py-1.5 text-muted hover:border-accent hover:text-fg">
+                <span class="text-accent-ink">{String(i + 1).padStart(2, "0")}</span> {s.id}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </main>
+
+  <script>
+    // Echo the path the visitor actually requested in the fake curl output.
+    const el = document.querySelector("[data-path]");
+    if (el) el.textContent = location.pathname;
+  </script>
+</Layout>

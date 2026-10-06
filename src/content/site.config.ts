@@ -15,6 +15,8 @@ export const site = {
     linkedin: "https://www.linkedin.com/in/tanmay-singh-3167b91b3/",
     resume: "/resume/TS_DE_26.pdf",
   },
+  // Search/social description (meta description, Open Graph, Twitter). Edit freely.
+  description: "Tanmay Singh — Data Engineer working across MLOps and AI systems. Projects, experience and resume. Based in India, open to UK roles.",
   // Filename the browser saves the resume as when using the download button.
   resumeDownloadName: "Tanmay_Singh_Resume.pdf",
 };

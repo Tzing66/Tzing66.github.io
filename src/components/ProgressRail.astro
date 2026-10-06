@@ -3,7 +3,8 @@ import { sections } from "../content/site.config";
 ---
 
 <!-- Desktop (xl+): vertical rail on the left; each dot sits where its section starts. -->
-<nav aria-label="Page progress" class="fixed top-28 bottom-16 left-7 z-40 hidden w-3 xl:block">
+<!-- Pointer convenience that duplicates the main nav, so it stays out of the tab order and a11y tree. -->
+<nav aria-label="Page progress" aria-hidden="true" class="fixed top-28 bottom-16 left-7 z-40 hidden w-3 xl:block">
   <div class="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-line" aria-hidden="true"></div>
   <div class="progress-y absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-accent" aria-hidden="true"></div>
   <ol>
@@ -12,6 +13,7 @@ import { sections } from "../content/site.config";
         <li class="absolute left-1/2 -translate-x-1/2 -translate-y-1/2" data-rail-dot={s.id} style={`top:${(i / (sections.length - 1)) * 100}%`}>
           <a
             href={`#${s.id}`}
+            tabindex="-1"
             data-spy={s.id}
             class="group/dot relative grid size-5 place-items-center"
           >

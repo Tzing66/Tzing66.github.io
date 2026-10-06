@@ -10,7 +10,9 @@ import StackGrid from "../components/StackGrid.astro";
 import Contact from "../components/Contact.astro";
 import ProgressRail from "../components/ProgressRail.astro";
 import NowGrid from "../components/NowGrid.astro";
-import { about } from "../content/site.config";
+import BackToTop from "../components/BackToTop.astro";
+import CommandPalette from "../components/CommandPalette.tsx";
+import { about, sections, projects, site } from "../content/site.config";
 ---
 
 <Layout>
@@ -53,4 +55,12 @@ import { about } from "../content/site.config";
     </Section>
   </main>
   <Footer />
+  <BackToTop />
+  <CommandPalette
+    client:idle
+    sections={sections.map(({ id, label }) => ({ id, label }))}
+    projects={projects.map((p) => ({ slug: p.slug, title: p.title ?? p.repo }))}
+    links={site.links}
+    email={site.email}
+  />
 </Layout>

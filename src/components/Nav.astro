@@ -48,6 +48,15 @@ const initials = site.name
     </ul>
 
     <div class="flex items-center gap-1">
+      <button
+        type="button"
+        data-palette-open
+        aria-label="Open command palette"
+        aria-keyshortcuts="Meta+K Control+K"
+        class="mr-1 hidden items-center gap-1.5 rounded-md border border-line px-2 py-1 font-mono text-[11px] text-muted transition-colors hover:border-accent hover:text-fg md:inline-flex"
+      >
+        <kbd data-kbd-hint>⌘K</kbd>
+      </button>
       <a
         href={site.links.github}
         target="_blank"
@@ -128,6 +137,17 @@ const initials = site.name
   sentinel.style.cssText = "position:absolute;top:0;height:8px;width:1px;";
   document.body.prepend(sentinel);
   new IntersectionObserver(([e]) => nav.toggleAttribute("data-scrolled", !e.isIntersecting)).observe(sentinel);
+
+  // Command palette hint: platform-appropriate label; click is queued if the island isn't hydrated yet.
+  if (!/Mac|iPhone|iPad/.test(navigator.platform)) {
+    document.querySelectorAll("[data-kbd-hint]").forEach((k) => (k.textContent = "Ctrl K"));
+  }
+  document.querySelectorAll("[data-palette-open]").forEach((btn) =>
+    btn.addEventListener("click", () => {
+      window.__paletteOpen = true;
+      dispatchEvent(new Event("palette:open"));
+    }),
+  );
 
   // Theme toggle.
   document.querySelectorAll("[data-theme-toggle]").forEach((btn) =>

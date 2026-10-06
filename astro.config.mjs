@@ -12,6 +12,8 @@ export default defineConfig({
   integrations: [react(), sitemap()],
   // Write-ups contain no real code, and Shiki's fixed dark theme would clash with the light theme.
   markdown: { syntaxHighlight: false },
+  // One page, ~11KB gzipped CSS: inlining removes the only render-blocking request.
+  build: { inlineStylesheets: 'always' },
 
   vite: {
     plugins: [tailwindcss()]

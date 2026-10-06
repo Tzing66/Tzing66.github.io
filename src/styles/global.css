@@ -207,9 +207,15 @@ html.js [data-reveal][data-seen]:not(.is-visible) {
   transform: translate3d(0, 6px, 0);
   transition-duration: 250ms;
 }
-html.js [data-reveal].is-visible {
+html.js [data-reveal].is-visible,
+html.js [data-reveal]:focus-within {
   opacity: 1;
   transform: none;
+}
+/* Keyboard focus must never land on something still invisible: no stagger delay, fast fade. */
+html.js [data-reveal]:focus-within {
+  transition-delay: 0ms;
+  transition-duration: 150ms;
 }
 
 /* Hover lift for cards: spring-ish, transform + shadow only. */
@@ -267,6 +273,10 @@ html.js [data-reveal].is-visible {
 .dag-node:focus-visible rect.dag-box {
   stroke: var(--accent);
 }
+/* SVG links can't show the usual outline ring, so focus thickens the node border instead. */
+.dag-node:focus-visible rect.dag-box {
+  stroke-width: 2.5;
+}
 .dag-node:focus-visible {
   outline: none;
 }
@@ -293,7 +303,16 @@ html.js [data-reveal].is-visible {
   opacity: 0;
 }
 
+/* Command palette: quick scale-in. */
+@keyframes palette-in {
+  from { opacity: 0; transform: translate3d(0, -6px, 0) scale(0.98); }
+}
+dialog.palette[open] {
+  animation: palette-in 160ms var(--ease-out);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  dialog.palette[open] { animation: none; }
   /* No movement: reveals become a quick fade, hovers don't move, the DAG is static. */
   html.js [data-reveal],
   html.js [data-reveal][data-seen]:not(.is-visible) {

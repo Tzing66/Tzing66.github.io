@@ -1,12 +1,29 @@
 ---
 import "../styles/global.css";
-import { site } from "../content/site.config";
+import { site, education } from "../content/site.config";
+// Preloaded so the hero renders in its real fonts first time (avoids a swap-induced layout shift).
+import sansFont from "@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2?url";
+import monoFont from "@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url";
 
 interface Props {
   title?: string;
   description?: string;
+  noindex?: boolean;
 }
-const { title = `${site.name} — ${site.role}`, description = site.pitch } = Astro.props;
+const { title = `${site.name} — ${site.role}`, description = site.pitch || site.description, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const ogImage = new URL("/og.png", site.url).href;
+const personLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.name,
+  alternateName: site.nickname,
+  jobTitle: "Data Engineer",
+  url: site.url,
+  email: `mailto:${site.email}`,
+  sameAs: [site.links.github, site.links.linkedin],
+  alumniOf: education.map((e) => ({ "@type": "CollegeOrUniversity", name: e.school })),
+};
 ---
 
 <!doctype html>
@@ -14,11 +31,35 @@ const { title = `${site.name} — ${site.role}`, description = site.pitch } = As
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" href={sansFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={monoFont} as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#0b0b0c" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={new URL(Astro.url.pathname, site.url)} />
+    <link rel="canonical" href={canonical} />
+    <meta name="author" content={site.name} />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} — ${site.role}`} />
+    <meta property="profile:first_name" content={site.name.split(" ")[0]} />
+    <meta property="profile:last_name" content={site.name.split(" ").slice(1).join(" ")} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <script type="application/ld+json" set:html={JSON.stringify(personLd)} />
     <!-- Apply the saved theme before first paint to avoid a flash. -->
     <script is:inline>
       document.documentElement.classList.add("js");
@@ -46,11 +87,18 @@ const { title = `${site.name} — ${site.role}`, description = site.pitch } = As
     <script>
       import { initReveal, initScrollSpy, initProgressFallback } from "../lib/reveal";
       import { updateTimes } from "../lib/time";
-      import { sections } from "../content/site.config";
+      import { sections, site } from "../content/site.config";
       updateTimes();
       initReveal();
       initScrollSpy(sections.map((s) => s.id));
       initProgressFallback();
+
+      // For the curious ones with DevTools open.
+      console.log(
+        "%c● tzing66.github.io%c\nBuilt with Astro + Tailwind, a pinch of React for the ⌘K palette.\nSource: https://github.com/Tzing66/Tzing66.github.io · Hiring? Say hi: " + site.email,
+        "color:#ffb224;font:600 13px ui-monospace,monospace",
+        "color:inherit;font:12px ui-monospace,monospace",
+      );
     </script>
   </body>
 </html>

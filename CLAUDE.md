@@ -23,3 +23,6 @@ Personal portfolio for Tanmay "Tanz" Singh. Astro (static) + Tailwind v4 + React
 - Scroll-driven CSS (`animation-timeline`): write longhands with the timeline in its own rule; Lightning CSS otherwise collapses them into `animation: none`.
 - Now-section data: `fetch-github.ts` also writes `activity` (GraphQL contribution calendar + latest public push); `fetch-lastfm.ts` writes `music.json` (needs `LASTFM_API_KEY` secret + `music.lastfmUser` in config). Every card checks its data via `src/lib/data.ts` and hides when it's missing. Spotify's API was rejected on purpose (Premium-only dev apps, refresh tokens expire after 6 months).
 - Relative times: render `<time data-ago="prefix " datetime=ISO>` with a build-time fallback; `updateTimes()` refreshes them client-side.
+- `og.png` and `apple-touch-icon.png` are generated at build by `src/pages/*.png.ts` (satori + resvg, `src/lib/og.ts`). The latin font subsets lack ● and →, so draw those as shapes.
+- Command palette is the only React island (`CommandPalette.tsx`, `client:idle`); other UI opens it via `dispatchEvent(new Event("palette:open"))`.
+- Check Lighthouse after visual changes: `npx lighthouse <url> [--preset=desktop]` with `CHROME_PATH` set; Phase 5 baseline is 100/100/100/100 on both presets.
