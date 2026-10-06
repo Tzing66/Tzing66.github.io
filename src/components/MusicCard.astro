@@ -14,7 +14,7 @@ const m = music!;
   <header class="mb-4 flex items-center justify-between gap-3">
     <h3 class="flex items-center gap-2 font-mono text-xs tracking-wide text-muted">
       <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
-      {m.recent[0]?.nowPlaying ? "Now playing" : "Recently played"}
+      Recently played
     </h3>
     <a href={m.profile} target="_blank" rel="noopener noreferrer" class="font-mono text-[11px] text-muted hover:text-fg">last.fm ↗</a>
   </header>
@@ -36,7 +36,8 @@ const m = music!;
               </span>
               <span class="shrink-0 font-mono text-[11px] text-muted">
                 {t.nowPlaying ? (
-                  <span class="text-accent-ink">live</span>
+                  // Playing when the snapshot was taken, which may be hours ago, so don't claim "live".
+                  <time data-ago datetime={m.fetchedAt} class="text-accent-ink">{timeAgo(m.fetchedAt)}</time>
                 ) : (
                   t.playedAt && <time data-ago datetime={t.playedAt}>{timeAgo(t.playedAt)}</time>
                 )}
