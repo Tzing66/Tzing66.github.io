@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Local docs (plan, agent notes) stay off GitHub; project write-ups are site content and must ship.
+*.md
+!src/content/projects/*.md
