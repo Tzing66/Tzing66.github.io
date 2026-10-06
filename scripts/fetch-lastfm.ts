@@ -15,12 +15,22 @@ const PLACEHOLDER_IMG = "2a96cbd8b46e442fc41c2b86b821562f";
 
 type LfmImage = { size: string; "#text": string };
 
-async function call(method: string, params: Record<string, string>) {
+// Last.fm intermittently answers "Operation failed - Most likely the backend service failed",
+// so retry a few times with backoff before giving up.
+async function call(method: string, params: Record<string, string>, attempts = 3) {
   const qs = new URLSearchParams({ method, user: music.lastfmUser, api_key: KEY!, format: "json", ...params });
-  const res = await fetch(`https://ws.audioscrobbler.com/2.0/?${qs}`, { signal: AbortSignal.timeout(10_000) });
-  const body = await res.json();
-  if (!res.ok || body.error) throw new Error(`${method}: ${body.message ?? `HTTP ${res.status}`}`);
-  return body;
+  for (let i = 1; ; i++) {
+    try {
+      const res = await fetch(`https://ws.audioscrobbler.com/2.0/?${qs}`, { signal: AbortSignal.timeout(10_000) });
+      const body = await res.json();
+      if (!res.ok || body.error) throw new Error(`${method}: ${body.message ?? `HTTP ${res.status}`}`);
+      return body;
+    } catch (err) {
+      if (i >= attempts) throw err;
+      console.warn(`[fetch-lastfm] ${(err as Error).message}; retry ${i}/${attempts - 1}`);
+      await new Promise((r) => setTimeout(r, 1500 * i));
+    }
+  }
 }
 
 const art = (images: LfmImage[] = []) => {

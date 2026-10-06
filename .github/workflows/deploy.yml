@@ -32,12 +32,26 @@ jobs:
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # music.json isn't committed, so carry the last good copy between runs: if Last.fm is
+      # down this run, the card shows the previous snapshot instead of disappearing.
+      - name: Restore last music snapshot
+        uses: actions/cache/restore@v6
+        with:
+          path: src/data/music.json
+          key: music-${{ github.run_id }}
+          restore-keys: music-
       # Listening data for the Now section; without the secret the card keeps cached data or hides.
       - name: Fetch Last.fm data
         run: npm run fetch:lastfm
         continue-on-error: true
         env:
           LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
+      - name: Save music snapshot
+        if: hashFiles('src/data/music.json') != ''
+        uses: actions/cache/save@v6
+        with:
+          path: src/data/music.json
+          key: music-${{ github.run_id }}
       - run: npm run build
       - uses: actions/upload-pages-artifact@v5
         with:
