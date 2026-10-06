@@ -10,8 +10,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "fetch:github": "node scripts/fetch-github.ts",
-    "fetch": "npm run fetch:github"
+    "fetch:github": "node --env-file-if-exists=.env scripts/fetch-github.ts",
+    "fetch": "npm run fetch:github && npm run fetch:lastfm",
+    "fetch:lastfm": "node --env-file-if-exists=.env scripts/fetch-lastfm.ts"
   },
   "dependencies": {
     "@astrojs/react": "^7.0.1",

@@ -1,20 +1,64 @@
 ---
 import Icon from "./Icon.astro";
-import { site } from "../content/site.config";
-const year = new Date().getFullYear();
+import { site, music as musicConfig } from "../content/site.config";
+import { github } from "../lib/github";
+import { music } from "../lib/music";
+import { timeAgo } from "../lib/time";
+
+const builtAt = new Date();
+const year = builtAt.getFullYear();
+const DAY = 24 * 3600 * 1000;
+const stale = (iso?: string | null) => !iso || builtAt.getTime() - new Date(iso).getTime() > DAY;
+
+// Status reflects real data freshness at build time, not a hard-coded "all good".
+const degraded = [
+  stale(github?.fetchedAt) && "github",
+  musicConfig.lastfmUser && stale(music?.fetchedAt) && "music",
+].filter(Boolean);
+const track = music?.recent[0];
 ---
 
 <footer class="border-t border-line">
-  <div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 font-mono text-xs text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
-    <p><span class="text-accent-ink">●</span> all systems operational</p>
-    <p>Built with Astro · deployed on GitHub Pages · © {year} {site.name}</p>
-    <div class="flex gap-1">
-      <a href={site.links.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="grid size-9 place-items-center rounded-md hover:text-fg">
-        <Icon name="github" size={16} />
-      </a>
-      <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="grid size-9 place-items-center rounded-md hover:text-fg">
-        <Icon name="linkedin" size={16} />
-      </a>
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <!-- Status bar -->
+    <p class="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line py-3 font-mono text-[11px] text-muted" role="status">
+      {
+        degraded.length === 0 ? (
+          <span>
+            <span class="text-accent-ink">●</span> all systems operational
+          </span>
+        ) : (
+          <span>
+            <span class="text-accent-ink">◐</span> degraded: {degraded.join(", ")} feed stale
+          </span>
+        )
+      }
+      <span class="text-line" aria-hidden="true">·</span>
+      <span>
+        last deploy <time data-ago datetime={builtAt.toISOString()}>{timeAgo(builtAt.toISOString())}</time>
+      </span>
+      {
+        track && (
+          <>
+            <span class="text-line" aria-hidden="true">·</span>
+            <a href={track.url} target="_blank" rel="noopener noreferrer" class="min-w-0 truncate hover:text-fg">
+              {track.nowPlaying ? "now playing" : "last played"}: {track.title} — {track.artist}
+            </a>
+          </>
+        )
+      }
+    </p>
+
+    <div class="flex flex-col gap-4 py-6 font-mono text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
+      <p>Built with Astro · deployed on GitHub Pages · © {year} {site.name}</p>
+      <div class="flex gap-1">
+        <a href={site.links.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="grid size-9 place-items-center rounded-md hover:text-fg">
+          <Icon name="github" size={16} />
+        </a>
+        <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="grid size-9 place-items-center rounded-md hover:text-fg">
+          <Icon name="linkedin" size={16} />
+        </a>
+      </div>
     </div>
   </div>
 </footer>

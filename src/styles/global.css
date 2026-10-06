@@ -314,3 +314,27 @@ html.js [data-reveal].is-visible {
     display: none;
   }
 }
+
+/* Tiny equalizer next to "Recently played". */
+.eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 10px;
+}
+.eq i {
+  width: 2px;
+  height: 100%;
+  background: var(--accent);
+  transform-origin: bottom;
+  animation: eq 900ms ease-in-out infinite alternate;
+}
+.eq i:nth-child(2) { animation-delay: -300ms; animation-duration: 700ms; }
+.eq i:nth-child(3) { animation-delay: -600ms; animation-duration: 1100ms; }
+@keyframes eq {
+  from { transform: scaleY(0.25); }
+  to { transform: scaleY(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eq i { animation: none; transform: scaleY(0.6); }
+}

@@ -1,0 +1,70 @@
+---
+// Contribution heatmap (last ~26 weeks) + latest public push. Hides parts that have no data.
+import { activity } from "../lib/github";
+import { timeAgo } from "../lib/time";
+import { site } from "../content/site.config";
+
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+const a = activity!;
+
+const CELL = 10;
+const GAP = 3;
+const weeks = Math.ceil(a.days.length / 7);
+const level = (n: number) => (n === 0 ? 0 : n < 3 ? 0.35 : n < 6 ? 0.6 : n < 10 ? 0.8 : 1);
+const recentTotal = a.days.reduce((sum, d) => sum + d.count, 0);
+const repoName = a.lastPush?.repo.split("/")[1];
+---
+
+<article class:list={["flex flex-col rounded-xl border border-line bg-surface p-5", className]}>
+  <header class="mb-4 flex items-center justify-between gap-3">
+    <h3 class="font-mono text-xs tracking-wide text-muted">GitHub activity</h3>
+    <a href={site.links.github} target="_blank" rel="noopener noreferrer" class="font-mono text-[11px] text-muted hover:text-fg">profile ↗</a>
+  </header>
+
+  {
+    a.lastPush && (
+      <p class="text-sm">
+        <span class="text-muted">last push </span>
+        <time data-ago datetime={a.lastPush.at}>{timeAgo(a.lastPush.at)}</time>
+        <span class="text-muted"> in </span>
+        <a href={`https://github.com/${a.lastPush.repo}`} target="_blank" rel="noopener noreferrer" class="font-mono text-accent-ink hover:underline">
+          {repoName}
+        </a>
+      </p>
+    )
+  }
+
+  {
+    a.days.length > 0 && (
+      <figure class="mt-auto pt-4">
+        <svg
+          viewBox={`0 0 ${weeks * (CELL + GAP) - GAP} ${7 * (CELL + GAP) - GAP}`}
+          class="h-auto w-full"
+          role="img"
+          aria-label={`${recentTotal} contributions in the last ${weeks} weeks`}
+        >
+          {a.days.map((d, i) => (
+            <rect
+              x={Math.floor(i / 7) * (CELL + GAP)}
+              y={(i % 7) * (CELL + GAP)}
+              width={CELL}
+              height={CELL}
+              rx="2"
+              class={d.count ? "fill-accent" : "fill-line"}
+              fill-opacity={d.count ? level(d.count) : 1}
+            >
+              <title>{`${d.count} contribution${d.count === 1 ? "" : "s"} on ${d.date}`}</title>
+            </rect>
+          ))}
+        </svg>
+        <figcaption class="mt-2 flex justify-between font-mono text-[11px] text-muted">
+          <span>{recentTotal} contributions · {weeks} weeks</span>
+          <span>{a.total} in the last year</span>
+        </figcaption>
+      </figure>
+    )
+  }
+</article>

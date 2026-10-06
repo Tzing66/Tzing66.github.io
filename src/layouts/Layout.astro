@@ -45,7 +45,9 @@ const { title = `${site.name} — ${site.role}`, description = site.pitch } = As
     <slot />
     <script>
       import { initReveal, initScrollSpy, initProgressFallback } from "../lib/reveal";
+      import { updateTimes } from "../lib/time";
       import { sections } from "../content/site.config";
+      updateTimes();
       initReveal();
       initScrollSpy(sections.map((s) => s.id));
       initProgressFallback();

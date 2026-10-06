@@ -5,7 +5,7 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: "0 */6 * * *" # rebuild every 6h to refresh GitHub/Spotify data
+    - cron: "0 */6 * * *" # rebuild every 6h to refresh GitHub + Last.fm data
 
 permissions:
   contents: read
@@ -32,6 +32,12 @@ jobs:
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Listening data for the Now section; without the secret the card keeps cached data or hides.
+      - name: Fetch Last.fm data
+        run: npm run fetch:lastfm
+        continue-on-error: true
+        env:
+          LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
       - run: npm run build
       - uses: actions/upload-pages-artifact@v5
         with:
@@ -46,3 +52,15 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5
+
+  # GitHub disables cron workflows after 60 days without repo activity. Re-enabling via the API
+  # on each scheduled run resets that clock, so the 6-hourly refresh never silently stops.
+  keepalive:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/deploy.yml/enable"
+        env:
+          GH_TOKEN: ${{ github.token }}

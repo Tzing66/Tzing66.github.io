@@ -1,0 +1,75 @@
+---
+// Recently played + on repeat this month. Snapshot taken at build time, labelled as such.
+import { music } from "../lib/music";
+import { timeAgo } from "../lib/time";
+
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+const m = music!;
+---
+
+<article class:list={["flex flex-col rounded-xl border border-line bg-surface p-5", className]}>
+  <header class="mb-4 flex items-center justify-between gap-3">
+    <h3 class="flex items-center gap-2 font-mono text-xs tracking-wide text-muted">
+      <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+      {m.recent[0]?.nowPlaying ? "Now playing" : "Recently played"}
+    </h3>
+    <a href={m.profile} target="_blank" rel="noopener noreferrer" class="font-mono text-[11px] text-muted hover:text-fg">last.fm ↗</a>
+  </header>
+
+  {
+    m.recent.length > 0 && (
+      <ol class="space-y-3">
+        {m.recent.map((t) => (
+          <li>
+            <a href={t.url} target="_blank" rel="noopener noreferrer" class="group flex items-center gap-3">
+              {t.image ? (
+                <img src={t.image} alt="" width="40" height="40" loading="lazy" decoding="async" class="size-10 shrink-0 rounded-md border border-line object-cover" />
+              ) : (
+                <span class="grid size-10 shrink-0 place-items-center rounded-md border border-line bg-bg text-muted" aria-hidden="true">♪</span>
+              )}
+              <span class="min-w-0 flex-1">
+                <span class="block truncate text-sm group-hover:text-accent-ink">{t.title}</span>
+                <span class="block truncate text-xs text-muted">{t.artist}</span>
+              </span>
+              <span class="shrink-0 font-mono text-[11px] text-muted">
+                {t.nowPlaying ? (
+                  <span class="text-accent-ink">live</span>
+                ) : (
+                  t.playedAt && <time data-ago datetime={t.playedAt}>{timeAgo(t.playedAt)}</time>
+                )}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    )
+  }
+
+  {
+    m.topTracks.length > 0 && (
+      <>
+        <h3 class="mt-6 mb-3 font-mono text-xs tracking-wide text-muted">On repeat this month</h3>
+        <ol class="space-y-1.5 text-sm">
+          {m.topTracks.map((t, i) => (
+            <li>
+              <a href={t.url} target="_blank" rel="noopener noreferrer" class="group flex items-baseline gap-3">
+                <span class="w-4 shrink-0 font-mono text-[11px] text-accent-ink">{i + 1}</span>
+                <span class="min-w-0 flex-1 truncate group-hover:text-accent-ink">
+                  {t.title} <span class="text-muted">· {t.artist}</span>
+                </span>
+                <span class="shrink-0 font-mono text-[11px] text-muted">{t.plays}×</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </>
+    )
+  }
+
+  <p class="mt-auto pt-5 font-mono text-[11px] text-muted">
+    snapshot · updated <time data-ago datetime={m.fetchedAt}>{timeAgo(m.fetchedAt)}</time>
+  </p>
+</article>
