@@ -7,7 +7,7 @@ export const site = {
   nickname: "Tanz",
   role: "Data Engineer · MLOps · AI systems",
   pitch: "", // TODO(Tanz): one sentence
-  location: "India · open to UK roles",
+  location: "India · remote or sponsored relocation",
   email: "tanmay.work10@gmail.com",
   url: "https://tzing66.github.io",
   links: {
@@ -16,7 +16,7 @@ export const site = {
     resume: "/resume/TS_DE_26.pdf",
   },
   // Search/social description (meta description, Open Graph, Twitter). Edit freely.
-  description: "Tanmay Singh — Data Engineer working across MLOps and AI systems. Projects, experience and resume. Based in India, open to UK roles.",
+  description: "Tanmay Singh — Data Engineer working across MLOps and AI systems. Projects, experience and resume. Based in India; open to remote roles or international relocation with visa sponsorship.",
   // Filename the browser saves the resume as when using the download button.
   resumeDownloadName: "Tanmay_Singh_Resume.pdf",
 };
@@ -39,7 +39,7 @@ export const about = {
     // TODO(Tanz): 2–3 short paragraphs
   ] as string[],
   photo: "", // TODO(Tanz): optional, e.g. "/me.jpg"
-  facts: ["📍 India · open to UK", "🛠 MLOps & Data Engineering", "🎓 MS @ Arizona State", "💻 BTech CSE @ Manipal"],
+  facts: ["📍 Based in India", "🌍 Remote or sponsored relocation", "🛠 MLOps & Data Engineering", "🎓 MS @ Arizona State", "💻 BTech CSE @ Manipal"],
 };
 
 export const experience = [
@@ -240,4 +240,6 @@ export const nowExtras: { label: string; title: string; text?: string; href?: st
 
 export const contact = {
   blurb: "Hiring for a data or ML platform role, or just want to talk pipelines? Reach out.",
+  // Where/how you can work, spelled out once for recruiters. Empty = hidden.
+  availability: "Open to remote roles, or relocating internationally with visa sponsorship.",
 };
