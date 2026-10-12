@@ -1,0 +1,35 @@
+---
+// Phone screenshots in simple device frames. "fan" = up to 3 overlapping phones for a card;
+// "row" = every screen in a horizontally scrollable strip for the write-up modal.
+interface Props {
+  screens: string[];
+  title: string;
+  variant?: "fan" | "row";
+}
+const { screens, title, variant = "fan" } = Astro.props;
+const shown = variant === "fan" ? screens.slice(0, 3) : screens;
+const frame = "overflow-hidden rounded-[1.4rem] border-[3px] border-line bg-bg shadow-xl shadow-black/30";
+---
+
+{
+  variant === "fan" ? (
+    <div class="flex h-full items-center justify-center px-6 py-8">
+      {shown.map((src, i) => (
+        <div
+          class:list={[frame, "lift-zoom relative w-[30%] max-w-40 shrink-0", i > 0 && "-ml-[8%]"]}
+          style={`z-index:${i === 1 ? 3 : 2 - i};transform:translateY(${i === 1 ? -4 : 6}%) rotate(${(i - 1) * 4}deg)`}
+        >
+          <img src={src} alt={`${title} screenshot ${i + 1}`} loading="lazy" decoding="async" width="390" height="844" class="block aspect-[9/19.5] w-full object-cover object-top" />
+        </div>
+      ))}
+    </div>
+  ) : (
+    <ul class="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2" aria-label={`${title} screenshots`}>
+      {shown.map((src, i) => (
+        <li class:list={[frame, "w-40 shrink-0 snap-start sm:w-48"]}>
+          <img src={src} alt={`${title} screenshot ${i + 1}`} loading="lazy" decoding="async" width="390" height="844" class="block aspect-[9/19.5] w-full object-cover object-top" />
+        </li>
+      ))}
+    </ul>
+  )
+}

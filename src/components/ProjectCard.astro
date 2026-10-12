@@ -1,5 +1,6 @@
 ---
 import Icon from "./Icon.astro";
+import PhoneScreens from "./PhoneScreens.astro";
 import type { Project } from "../content/site.config";
 import { repoStats } from "../lib/github";
 import { timeAgo } from "../lib/time";
@@ -34,7 +35,9 @@ const link = "relative z-10 inline-flex items-center gap-1.5 font-mono text-xs t
   {
     p.featured && (
       <div class="relative aspect-[16/10] overflow-hidden border-b border-line bg-bg md:order-2 md:aspect-auto md:border-b-0 md:border-l">
-        {p.image ? (
+        {p.screens?.length ? (
+          <PhoneScreens screens={p.screens} title={title} />
+        ) : p.image ? (
           <img
             src={p.image}
             alt={`Screenshot of ${title}`}
@@ -44,6 +47,14 @@ const link = "relative z-10 inline-flex items-center gap-1.5 font-mono text-xs t
             height="825"
             class="lift-zoom absolute inset-0 size-full object-cover object-top"
           />
+        ) : p.icon ? (
+          // App without screenshots yet: its icon inside an empty phone outline.
+          <div class="lift-zoom absolute inset-0 flex items-center justify-center" aria-hidden="true">
+            <div class="flex aspect-[9/19.5] h-[80%] max-h-80 flex-col items-center justify-center gap-3 rounded-[1.6rem] border-[3px] border-dashed border-line">
+              <img src={p.icon} alt="" width="80" height="80" loading="lazy" decoding="async" class="aspect-square w-1/2 max-w-20 rounded-[22%]" />
+              <span class="font-mono text-[10px] text-muted">soon</span>
+            </div>
+          </div>
         ) : (
           // No screenshot: draw the project's stack as a tiny pipeline instead.
           <div class="lift-zoom absolute inset-0 flex flex-col justify-center gap-2 p-6 font-mono text-xs text-muted" aria-hidden="true">
@@ -79,6 +90,14 @@ const link = "relative z-10 inline-flex items-center gap-1.5 font-mono text-xs t
       }
     </h3>
     {tagline && <p class="mt-1.5 text-sm text-muted">{tagline}</p>}
+    {
+      p.note && (
+        <p class="mt-3 inline-flex items-center gap-2 font-mono text-[11px] text-accent-ink">
+          <span class="size-1.5 animate-pulse rounded-full bg-accent motion-reduce:animate-none" aria-hidden="true" />
+          {p.note}
+        </p>
+      )
+    }
 
     {
       p.featured && p.highlights?.length ? (
@@ -103,7 +122,18 @@ const link = "relative z-10 inline-flex items-center gap-1.5 font-mono text-xs t
       ) : null
     }
 
-    <div class="mt-auto flex flex-wrap gap-4 pt-5">
+    <div class="mt-auto flex flex-wrap items-center gap-4 pt-5">
+      {
+        p.cta && (
+          <a
+            href={p.cta.href}
+            {...(p.cta.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            class="relative z-10 inline-flex items-center rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-on-accent hover:brightness-110"
+          >
+            {p.cta.label}
+          </a>
+        )
+      }
       <a href={repoUrl} target="_blank" rel="noopener noreferrer" class={link}>
         <Icon name="github" size={14} /> Repo
       </a>

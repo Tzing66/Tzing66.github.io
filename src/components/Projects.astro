@@ -2,6 +2,7 @@
 import { getCollection, render } from "astro:content";
 import ProjectCard from "./ProjectCard.astro";
 import Icon from "./Icon.astro";
+import PhoneScreens from "./PhoneScreens.astro";
 import { projects } from "../content/site.config";
 import { repoStats } from "../lib/github";
 
@@ -57,6 +58,14 @@ const modals = await Promise.all(
             <Icon name="close" />
           </button>
         </div>
+        {p.note && (
+          <p class="px-6 pt-5 font-mono text-[11px] text-accent-ink">● {p.note}</p>
+        )}
+        {p.screens?.length ? (
+          <div class="px-6 pt-5">
+            <PhoneScreens screens={p.screens} title={p.title ?? p.repo} variant="row" />
+          </div>
+        ) : null}
         <div class="writeup px-6 py-6">
           <Content />
         </div>
@@ -67,6 +76,15 @@ const modals = await Promise.all(
           {p.demo && (
             <a href={p.demo} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg bg-accent px-3 py-2 text-sm font-medium text-on-accent">
               ↗ Live demo
+            </a>
+          )}
+          {p.cta && (
+            <a
+              href={p.cta.href}
+              {...(p.cta.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              class="inline-flex items-center gap-2 rounded-lg bg-accent px-3 py-2 text-sm font-medium text-on-accent hover:brightness-110"
+            >
+              {p.cta.label}
             </a>
           )}
         </div>

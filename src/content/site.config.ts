@@ -81,7 +81,7 @@ export const education = [
   },
 ];
 
-export type ProjectTag = "Data Eng" | "ML" | "AI" | "Analytics";
+export type ProjectTag = "Data Eng" | "ML" | "AI" | "Analytics" | "Mobile";
 
 export type Project = {
   repo: string; // owner/name on GitHub
@@ -91,14 +91,44 @@ export type Project = {
   tagline?: string; // falls back to the GitHub description
   status?: "live" | "building" | "complete" | "archived";
   demo?: string;
-  image?: string; // screenshot under public/
+  image?: string; // landscape screenshot under public/
+  icon?: string; // app icon under public/ (placeholder when there are no screenshots yet)
+  screens?: string[]; // phone screenshots under public/, shown as a gallery
+  note?: string; // short status line, e.g. "In development — not public yet"
+  cta?: { label: string; href: string }; // primary call to action on the card and write-up
   highlights?: string[];
   stack?: string[];
   tags?: ProjectTag[]; // drives the filter chips
 };
 
+// Mettle beta sign-up. Paste a Google Form (or similar) link here; while empty, the
+// "Want to try the beta?" button opens a pre-filled email instead.
+const mettleBetaForm = ""; // TODO(Tanz): Google Form URL
+
 // Curated allowlist. ONLY repos listed here are shown, in this order.
 export const projects: Project[] = [
+  {
+    repo: "Tzing66/mettle",
+    slug: "mettle",
+    featured: true,
+    title: "Mettle",
+    tagline: "Gamified workout tracker: show up to earn XP, hit real benchmarks to earn a lot of it, climb from E to S rank",
+    status: "building",
+    note: "In development — not public yet",
+    cta: {
+      label: "Want to try the beta?",
+      href: mettleBetaForm || `mailto:${site.email}?subject=${encodeURIComponent("Mettle beta")}&body=${encodeURIComponent("Hi Tanmay, I'd like to try the Mettle beta.\n\nPhone (iOS / Android): ")}`,
+    },
+    icon: "/projects/mettle/icon.png",
+    screens: [], // TODO(Tanz): phone screenshots, e.g. "/projects/mettle/home.jpg"
+    highlights: [
+      "Offline-first logging on local SQLite, synced to Supabase when you sign in",
+      "XP comes from a pure TypeScript engine that also runs server-side, so leaderboard XP can't be edited on the phone",
+      "325 exercises with strength and running standards normalised for bodyweight, age and sex; friend groups with weekly leaderboards",
+    ],
+    stack: ["React Native", "Expo", "TypeScript", "SQLite", "Supabase", "Postgres"],
+    tags: ["Mobile"],
+  },
   {
     repo: "Tzing66/CheckYourData",
     slug: "checkyourdata",
@@ -183,9 +213,12 @@ export const stack = [
   { group: "Cloud & DevOps", items: ["AWS", "Docker", "GitHub Actions"] },
 ];
 
-export const currently = [
+// Plain strings, or { text, href } to make an item a link (e.g. to a project write-up).
+export const currently: (string | { text: string; href: string })[] = [
+  { text: "Building Mettle", href: "#projects/mettle" },
   "Grinding NeetCode 150",
-  // TODO(Tanz): what you're building, reading, learning
+  "Reading up about something niche",
+  "Finding the next big breakthrough",
 ];
 
 // Listening data for the Now section, fetched at build time from Last.fm (see scripts/fetch-lastfm.ts).
