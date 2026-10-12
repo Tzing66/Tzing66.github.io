@@ -103,7 +103,7 @@ export type Project = {
 
 // Mettle beta sign-up. Paste a Google Form (or similar) link here; while empty, the
 // "Want to try the beta?" button opens a pre-filled email instead.
-const mettleBetaForm = ""; // TODO(Tanz): Google Form URL
+const mettleBetaForm = "https://forms.gle/QbLSDqcSx2JKkgqD7";
 
 // Curated allowlist. ONLY repos listed here are shown, in this order.
 export const projects: Project[] = [
@@ -120,7 +120,13 @@ export const projects: Project[] = [
       href: mettleBetaForm || `mailto:${site.email}?subject=${encodeURIComponent("Mettle beta")}&body=${encodeURIComponent("Hi Tanmay, I'd like to try the Mettle beta.\n\nPhone (iOS / Android): ")}`,
     },
     icon: "/projects/mettle/icon.png",
-    screens: [], // TODO(Tanz): phone screenshots, e.g. "/projects/mettle/home.jpg"
+    // First three show on the card (middle one raised); all show in the write-up.
+    screens: [
+      "/projects/mettle/launch.webp",
+      "/projects/mettle/home.webp",
+      "/projects/mettle/progression.webp",
+      "/projects/mettle/routines.webp",
+    ],
     highlights: [
       "Offline-first logging on local SQLite, synced to Supabase when you sign in",
       "XP comes from a pure TypeScript engine that also runs server-side, so leaderboard XP can't be edited on the phone",

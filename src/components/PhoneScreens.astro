@@ -24,7 +24,7 @@ const frame = "overflow-hidden rounded-[1.4rem] border-[3px] border-line bg-bg s
       ))}
     </div>
   ) : (
-    <ul class="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2" aria-label={`${title} screenshots`}>
+    <ul class="-mx-6 flex snap-x snap-mandatory scroll-px-6 gap-4 overflow-x-auto px-6 pb-2" aria-label={`${title} screenshots`}>
       {shown.map((src, i) => (
         <li class:list={[frame, "w-40 shrink-0 snap-start sm:w-48"]}>
           <img src={src} alt={`${title} screenshot ${i + 1}`} loading="lazy" decoding="async" width="390" height="844" class="block aspect-[9/19.5] w-full object-cover object-top" />
