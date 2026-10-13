@@ -1,6 +1,9 @@
 ---
 import Icon from "./Icon.astro";
 import PhoneScreens from "./PhoneScreens.astro";
+import LineChart from "./charts/LineChart.astro";
+import FlowDiagram from "./charts/FlowDiagram.astro";
+import solarChart from "../content/charts/solar.json";
 import type { Project } from "../content/site.config";
 import { repoStats } from "../lib/github";
 import { timeAgo } from "../lib/time";
@@ -8,12 +11,14 @@ import { timeAgo } from "../lib/time";
 interface Props {
   project: Project;
   hasWriteup: boolean;
+  index: number;
 }
-const { project: p, hasWriteup } = Astro.props;
+const { project: p, hasWriteup, index } = Astro.props;
 const stats = repoStats(p.repo);
 const title = p.title ?? p.repo.split("/")[1];
 const tagline = p.tagline || stats?.description || "";
 const repoUrl = stats?.url ?? `https://github.com/${p.repo}`;
+const flip = index % 2 === 1; // alternate the visual's side for rhythm down the list
 
 const statusStyle: Record<string, string> = {
   live: "border-accent/50 text-accent-ink",
@@ -24,128 +29,135 @@ const statusStyle: Record<string, string> = {
 const link = "relative z-10 inline-flex items-center gap-1.5 font-mono text-xs text-muted transition-colors hover:text-accent-ink";
 ---
 
-<!-- li = grid placement + scroll reveal; article = hover lift (kept separate so their transforms don't fight). -->
-<li data-project-card data-tags={(p.tags ?? []).join("|")} class:list={[p.featured && "md:col-span-2"]}>
-<article
-  class:list={[
-    "lift group relative flex h-full flex-col overflow-hidden rounded-xl border border-line bg-surface",
-    p.featured && "md:grid md:grid-cols-[1.15fr_1fr]",
-  ]}
->
-  {
-    p.featured && (
-      <div class="relative aspect-[16/10] overflow-hidden border-b border-line bg-bg md:order-2 md:aspect-auto md:border-b-0 md:border-l">
-        {p.screens?.length ? (
+<!-- li = scroll reveal; article = hover lift (kept separate so their transforms don't fight). -->
+<li data-project-card data-tags={(p.tags ?? []).join("|")}>
+  <article
+    class:list={[
+      "lift group relative flex h-full flex-col overflow-hidden rounded-xl border border-line bg-surface md:grid",
+      flip ? "md:grid-cols-[1fr_1.15fr]" : "md:grid-cols-[1.15fr_1fr]",
+    ]}
+  >
+    <!-- Visual: phone screens › chart › image › pipeline diagram › app icon -->
+    <div
+      class:list={[
+        "relative overflow-hidden border-b border-line bg-bg md:min-h-80 md:border-b-0",
+        // Charts and diagrams size to their content; photos keep a fixed frame.
+        p.chart || (p.flow?.length && !p.image) ? "min-h-64" : "aspect-[16/10] md:aspect-auto",
+        flip ? "md:order-1 md:border-r" : "md:order-2 md:border-l",
+      ]}
+      style={p.imageBg ? `background:${p.imageBg}` : undefined}
+    >
+      {
+        p.screens?.length ? (
           <PhoneScreens screens={p.screens} title={title} />
+        ) : p.chart === "solar" ? (
+          // z-10 lifts the chart above the card's stretched link so its crosshair gets the pointer.
+          <div class="relative z-10 h-full p-5 sm:p-6">
+            <LineChart data={solarChart} />
+          </div>
         ) : p.image ? (
-          <img
-            src={p.image}
-            alt={`Screenshot of ${title}`}
-            loading="lazy"
-            decoding="async"
-            width="1200"
-            height="825"
-            class="lift-zoom absolute inset-0 size-full object-cover object-top"
-          />
+          <>
+            <img
+              src={p.image}
+              alt={`${title}: ${p.gallery?.find((g) => g.src === p.image)?.caption ?? "project image"}`}
+              loading="lazy"
+              decoding="async"
+              width="1200"
+              height="775"
+              class:list={["lift-zoom absolute inset-0 size-full", p.imageFit === "contain" ? "object-contain p-4" : "object-cover object-top"]}
+            />
+            {p.credit && (
+              <span class="absolute right-2 bottom-2 rounded bg-black/55 px-1.5 py-0.5 font-mono text-[9px] text-white/80">{p.credit}</span>
+            )}
+          </>
+        ) : p.flow?.length ? (
+          <div class="lift-zoom flex h-full items-center justify-center p-6">
+            <FlowDiagram steps={p.flow} title={title} />
+          </div>
         ) : p.icon ? (
-          // App without screenshots yet: its icon inside an empty phone outline.
           <div class="lift-zoom absolute inset-0 flex items-center justify-center" aria-hidden="true">
-            <div class="flex aspect-[9/19.5] h-[80%] max-h-80 flex-col items-center justify-center gap-3 rounded-[1.6rem] border-[3px] border-dashed border-line">
-              <img src={p.icon} alt="" width="80" height="80" loading="lazy" decoding="async" class="aspect-square w-1/2 max-w-20 rounded-[22%]" />
-              <span class="font-mono text-[10px] text-muted">soon</span>
-            </div>
+            <img src={p.icon} alt="" width="80" height="80" loading="lazy" decoding="async" class="aspect-square w-20 rounded-[22%]" />
           </div>
-        ) : (
-          // No screenshot: draw the project's stack as a tiny pipeline instead.
-          <div class="lift-zoom absolute inset-0 flex flex-col justify-center gap-2 p-6 font-mono text-xs text-muted" aria-hidden="true">
-            {(p.stack ?? []).slice(0, 5).map((s, i) => (
-              <div class="flex items-center gap-2" style={`padding-left:${i * 14}px`}>
-                <span class="text-accent-ink">{i === 0 ? "▸" : "└▸"}</span>
-                <span class="rounded border border-line bg-surface px-2 py-1 text-fg">{s}</span>
-              </div>
-            ))}
-          </div>
-        )}
+        ) : null
+      }
+    </div>
+
+    <div class:list={["flex flex-1 flex-col p-5 sm:p-6", flip ? "md:order-2" : "md:order-1"]}>
+      <div class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-muted">
+        {p.status && <span class:list={["rounded-full border px-2 py-0.5 uppercase tracking-wider", statusStyle[p.status]]}>{p.status}</span>}
+        {stats?.language && <span>{stats.language}</span>}
+        {stats && stats.stars > 0 && <span aria-label={`${stats.stars} stars`}>★ {stats.stars}</span>}
+        {stats?.pushedAt && <time data-ago="updated " datetime={stats.pushedAt}>updated {timeAgo(stats.pushedAt)}</time>}
       </div>
-    )
-  }
 
-  <div class="flex flex-1 flex-col p-5 sm:p-6">
-    <div class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] text-muted">
-      {p.status && <span class:list={["rounded-full border px-2 py-0.5 uppercase tracking-wider", statusStyle[p.status]]}>{p.status}</span>}
-      {stats?.language && <span>{stats.language}</span>}
-      {stats && <span aria-label={`${stats.stars} stars`}>★ {stats.stars}</span>}
-      {stats?.pushedAt && <time data-ago="updated " datetime={stats.pushedAt}>updated {timeAgo(stats.pushedAt)}</time>}
+      <h3 class="text-2xl font-semibold tracking-tight">
+        {
+          hasWriteup ? (
+            <button type="button" data-open-project={p.slug} class="text-left after:absolute after:inset-0 after:content-['']">
+              {title}
+            </button>
+          ) : (
+            title
+          )
+        }
+      </h3>
+      {tagline && <p class="mt-1.5 text-sm text-muted">{tagline}</p>}
+      {
+        p.note && (
+          <p class="mt-3 inline-flex items-center gap-2 font-mono text-[11px] text-accent-ink">
+            <span class="size-1.5 animate-pulse rounded-full bg-accent motion-reduce:animate-none" aria-hidden="true" />
+            {p.note}
+          </p>
+        )
+      }
+
+      {
+        p.highlights?.length ? (
+          <ul class="mt-4 space-y-1.5 text-sm">
+            {p.highlights.map((h) => (
+              <li class="flex gap-2">
+                <span class="text-accent-ink">›</span>
+                {h}
+              </li>
+            ))}
+          </ul>
+        ) : null
+      }
+
+      {
+        p.stack?.length ? (
+          <ul class="mt-4 flex flex-wrap gap-1.5" aria-label="Tech stack">
+            {p.stack.map((s) => (
+              <li class="rounded border border-line px-2 py-0.5 font-mono text-[11px] text-muted">{s}</li>
+            ))}
+          </ul>
+        ) : null
+      }
+
+      <div class="mt-auto flex flex-wrap items-center gap-4 pt-5">
+        {
+          p.cta && (
+            <a
+              href={p.cta.href}
+              {...(p.cta.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              class="relative z-10 inline-flex items-center rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-on-accent hover:brightness-110"
+            >
+              {p.cta.label}
+            </a>
+          )
+        }
+        <a href={repoUrl} target="_blank" rel="noopener noreferrer" class={link}>
+          <Icon name="github" size={14} /> Repo
+        </a>
+        {
+          p.demo && (
+            <a href={p.demo} target="_blank" rel="noopener noreferrer" class={link}>
+              ↗ Live demo
+            </a>
+          )
+        }
+        {hasWriteup && <span class="font-mono text-xs text-muted" aria-hidden="true">Details →</span>}
+      </div>
     </div>
-
-    <h3 class:list={["font-semibold tracking-tight", p.featured ? "text-2xl" : "text-lg"]}>
-      {
-        hasWriteup ? (
-          <button type="button" data-open-project={p.slug} class="text-left after:absolute after:inset-0 after:content-['']">
-            {title}
-          </button>
-        ) : (
-          title
-        )
-      }
-    </h3>
-    {tagline && <p class="mt-1.5 text-sm text-muted">{tagline}</p>}
-    {
-      p.note && (
-        <p class="mt-3 inline-flex items-center gap-2 font-mono text-[11px] text-accent-ink">
-          <span class="size-1.5 animate-pulse rounded-full bg-accent motion-reduce:animate-none" aria-hidden="true" />
-          {p.note}
-        </p>
-      )
-    }
-
-    {
-      p.featured && p.highlights?.length ? (
-        <ul class="mt-4 space-y-1.5 text-sm">
-          {p.highlights.map((h) => (
-            <li class="flex gap-2">
-              <span class="text-accent-ink">›</span>
-              {h}
-            </li>
-          ))}
-        </ul>
-      ) : null
-    }
-
-    {
-      p.stack?.length ? (
-        <ul class="mt-4 flex flex-wrap gap-1.5" aria-label="Tech stack">
-          {p.stack.map((s) => (
-            <li class="rounded border border-line px-2 py-0.5 font-mono text-[11px] text-muted">{s}</li>
-          ))}
-        </ul>
-      ) : null
-    }
-
-    <div class="mt-auto flex flex-wrap items-center gap-4 pt-5">
-      {
-        p.cta && (
-          <a
-            href={p.cta.href}
-            {...(p.cta.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-            class="relative z-10 inline-flex items-center rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-on-accent hover:brightness-110"
-          >
-            {p.cta.label}
-          </a>
-        )
-      }
-      <a href={repoUrl} target="_blank" rel="noopener noreferrer" class={link}>
-        <Icon name="github" size={14} /> Repo
-      </a>
-      {
-        p.demo && (
-          <a href={p.demo} target="_blank" rel="noopener noreferrer" class={link}>
-            ↗ Live demo
-          </a>
-        )
-      }
-      {hasWriteup && <span class="font-mono text-xs text-muted" aria-hidden="true">Details →</span>}
-    </div>
-  </div>
-</article>
+  </article>
 </li>

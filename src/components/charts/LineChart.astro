@@ -1,0 +1,134 @@
+---
+// Two-series line chart over a date axis. The plot is an SVG stretched to its box with
+// non-scaling 2px strokes; axis labels, hover dots and the tooltip are HTML so text stays
+// legible at card size. Hover/keyboard crosshair lives in src/lib/charts.ts.
+interface Point {
+  date: string;
+  [key: string]: number | string;
+}
+interface Props {
+  data: {
+    title: string;
+    subtitle?: string;
+    unit: string;
+    shortUnit?: string;
+    series: { key: string; label: string }[];
+    points: Point[];
+  };
+  variant?: "card" | "full";
+}
+const { data, variant = "card" } = Astro.props;
+const [s1, s2] = data.series; // s1 = reference (blue), s2 = focus (amber)
+const colors = ["var(--series-1)", "var(--series-2)"];
+
+const t = (d: string) => new Date(`${d}T00:00:00Z`).getTime();
+const year = data.points[0].date.slice(0, 4);
+const t0 = t(`${year}-01-01`);
+const t1 = t(`${year}-12-31`);
+const x = (d: string) => (t(d) - t0) / (t1 - t0);
+
+const max = Math.max(...data.points.flatMap((p) => data.series.map((s) => Number(p[s.key]))));
+const step = 2000;
+const yMax = Math.ceil(max / step) * step;
+const y = (v: number) => v / yMax;
+const yTicks = Array.from({ length: yMax / step + 1 }, (_, i) => i * step);
+const fmtK = (v: number) => (v === 0 ? "0" : `${v / 1000}k`);
+const months = ["Jan", "Apr", "Jul", "Oct"].map((m, i) => ({ label: m, at: x(`${year}-${String(i * 3 + 1).padStart(2, "0")}-01`) }));
+
+const path = (key: string) =>
+  data.points.map((p, i) => `${i ? "L" : "M"}${(x(p.date) * 1000).toFixed(1)} ${((1 - y(Number(p[key]))) * 1000).toFixed(1)}`).join(" ");
+
+// Compact payload for the client crosshair: [x, y1, y2, label, v1, v2]
+const fmtDate = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+const payload = data.points.map((p) => [x(p.date), y(Number(p[s1.key])), y(Number(p[s2.key])), fmtDate(p.date), Number(p[s1.key]), Number(p[s2.key])]);
+const full = variant === "full";
+---
+
+<figure class="flex h-full flex-col" data-line-chart data-points={JSON.stringify(payload)} data-labels={JSON.stringify([s1.label, s2.label])}>
+  <figcaption class="mb-3">
+    {full && <p class="text-sm font-medium text-fg">{data.title}</p>}
+    {full && data.subtitle && <p class="text-xs text-muted">{data.subtitle}</p>}
+    <ul class="mt-1 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] text-muted" aria-label="Legend">
+      {
+        data.series.map((s, i) => (
+          <li class="flex items-center gap-1.5">
+            <span class="h-0.5 w-3.5 rounded-full" style={`background:${colors[i]}`} aria-hidden="true" />
+            {s.label}
+          </li>
+        ))
+      }
+      {!full && <li class="text-muted/70">{data.shortUnit ?? data.unit}</li>}
+    </ul>
+  </figcaption>
+
+  <div class:list={["relative flex-1 pb-5 pl-8", full ? "min-h-56" : "min-h-36"]}>
+    <!-- y ticks + gridlines -->
+    {
+      yTicks.map((v) => (
+        <div class="pointer-events-none absolute right-0 left-8" style={`bottom:calc(1.25rem + (100% - 1.25rem) * ${y(v)})`} aria-hidden="true">
+          <div class="h-px bg-line" />
+          <span class="absolute -top-2 -left-8 w-7 text-right font-mono text-[10px] text-muted tabular-nums">{fmtK(v)}</span>
+        </div>
+      ))
+    }
+    <!-- x ticks -->
+    {
+      months.map((m) => (
+        <span class="pointer-events-none absolute bottom-0 -translate-x-1/2 font-mono text-[10px] text-muted" style={`left:calc(2rem + (100% - 2rem) * ${m.at})`} aria-hidden="true">
+          {m.label}
+        </span>
+      ))
+    }
+
+    <div
+      class="absolute inset-0 bottom-5 left-8 outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
+      data-plot
+      tabindex="0"
+      role="img"
+      aria-label={`${data.title}: ${data.points.length} days. Use left and right arrow keys to read values.`}
+    >
+      <svg class="absolute inset-0 size-full overflow-visible" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
+        <path d={path(s1.key)} fill="none" stroke="var(--series-1)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+        <path d={path(s2.key)} fill="none" stroke="var(--series-2)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+      </svg>
+      <!-- crosshair, filled in by src/lib/charts.ts -->
+      <div data-crosshair class="pointer-events-none absolute inset-y-0 hidden w-px bg-muted/50"></div>
+      <span data-dot="0" class="pointer-events-none absolute hidden size-2.5 -translate-1/2 rounded-full ring-2 ring-surface" style="background:var(--series-1)"></span>
+      <span data-dot="1" class="pointer-events-none absolute hidden size-2.5 -translate-1/2 rounded-full ring-2 ring-surface" style="background:var(--series-2)"></span>
+      <div data-tooltip class="pointer-events-none absolute top-1 z-10 hidden min-w-28 rounded-md border border-line bg-surface/95 px-2.5 py-2 text-xs shadow-lg backdrop-blur"></div>
+    </div>
+    <p class="sr-only" aria-live="polite" data-live></p>
+  </div>
+
+  {
+    full && (
+      <details class="mt-3 text-xs text-muted">
+        <summary class="cursor-pointer font-mono text-[11px] hover:text-fg">Data table</summary>
+        <div class="mt-2 max-h-56 overflow-auto">
+          <table class="w-full font-mono text-[11px] tabular-nums">
+            <thead>
+              <tr class="text-left text-fg">
+                <th class="py-1 font-medium">Date</th>
+                {data.series.map((s) => <th class="py-1 text-right font-medium">{s.label}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {data.points.map((p) => (
+                <tr class="border-t border-line">
+                  <td class="py-1">{p.date}</td>
+                  {data.series.map((s) => <td class="py-1 text-right">{Number(p[s.key]).toLocaleString("en-US")}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-2">Unit: {data.unit}.</p>
+      </details>
+    )
+  }
+</figure>
+
+<script>
+  import { initLineCharts } from "../../lib/charts";
+  initLineCharts();
+</script>

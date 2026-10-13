@@ -1,0 +1,34 @@
+{
+ "title": "Net CO\u2082 saved per year",
+ "subtitle": "Five proposed routes \u00b7 20 riders per bus \u00b7 12-mile average trip",
+ "unit": "metric tons CO\u2082 / year",
+ "source": "Tzing66/mesa-transit-expansion-emissions-analysis \u00b7 Carbon_emissions_analysis.ipynb",
+ "series": [
+  {
+   "key": "diesel",
+   "label": "Diesel bus"
+  },
+  {
+   "key": "electric",
+   "label": "Electric bus"
+  }
+ ],
+ "groups": [
+  {
+   "label": "5% uptake",
+   "diesel": 5137.02,
+   "electric": 7591.37
+  },
+  {
+   "label": "10% uptake",
+   "diesel": 10272.42,
+   "electric": 15180.35
+  },
+  {
+   "label": "15% uptake",
+   "diesel": 15409.44,
+   "electric": 22771.73
+  }
+ ],
+ "note": "Average across all 24 modelled scenarios: 8,078 t CO\u2082 / year."
+}

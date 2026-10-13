@@ -1,0 +1,204 @@
+{
+ "title": "Actual vs predicted daily solar output",
+ "subtitle": "Phoenix, 2006 \u00b7 37 held-out test days \u00b7 linear regression on weather features",
+ "unit": "daily output, sum of 5-minute MW readings",
+ "source": "Tzing66/Solar-Intensity-Model \u00b7 model.ipynb (reproduced: same split, seed 40)",
+ "series": [
+  {
+   "key": "actual",
+   "label": "Actual"
+  },
+  {
+   "key": "predicted",
+   "label": "Predicted"
+  }
+ ],
+ "points": [
+  {
+   "date": "2006-01-04",
+   "actual": 4825.8,
+   "predicted": 4686.6
+  },
+  {
+   "date": "2006-01-07",
+   "actual": 4387.1,
+   "predicted": 4459.1
+  },
+  {
+   "date": "2006-01-10",
+   "actual": 5454.6,
+   "predicted": 5045.8
+  },
+  {
+   "date": "2006-01-13",
+   "actual": 5179.8,
+   "predicted": 5020.9
+  },
+  {
+   "date": "2006-01-14",
+   "actual": 3622.2,
+   "predicted": 4150.0
+  },
+  {
+   "date": "2006-01-19",
+   "actual": 5123.7,
+   "predicted": 4931.2
+  },
+  {
+   "date": "2006-01-27",
+   "actual": 5415.7,
+   "predicted": 5326.3
+  },
+  {
+   "date": "2006-02-26",
+   "actual": 4935.5,
+   "predicted": 5057.2
+  },
+  {
+   "date": "2006-03-04",
+   "actual": 4412.4,
+   "predicted": 5132.4
+  },
+  {
+   "date": "2006-03-11",
+   "actual": 1600.4,
+   "predicted": 2219.3
+  },
+  {
+   "date": "2006-04-17",
+   "actual": 7883.2,
+   "predicted": 7304.4
+  },
+  {
+   "date": "2006-05-13",
+   "actual": 7948.4,
+   "predicted": 6906.5
+  },
+  {
+   "date": "2006-05-14",
+   "actual": 6374.1,
+   "predicted": 6936.1
+  },
+  {
+   "date": "2006-05-16",
+   "actual": 5644.6,
+   "predicted": 6305.9
+  },
+  {
+   "date": "2006-05-20",
+   "actual": 7416.6,
+   "predicted": 6983.2
+  },
+  {
+   "date": "2006-05-23",
+   "actual": 7790.2,
+   "predicted": 7090.3
+  },
+  {
+   "date": "2006-06-24",
+   "actual": 4982.4,
+   "predicted": 4100.7
+  },
+  {
+   "date": "2006-07-10",
+   "actual": 6518.1,
+   "predicted": 6553.9
+  },
+  {
+   "date": "2006-07-23",
+   "actual": 5882.5,
+   "predicted": 5429.5
+  },
+  {
+   "date": "2006-07-29",
+   "actual": 4743.7,
+   "predicted": 4919.4
+  },
+  {
+   "date": "2006-08-01",
+   "actual": 5613.3,
+   "predicted": 6054.4
+  },
+  {
+   "date": "2006-08-17",
+   "actual": 6115.0,
+   "predicted": 6521.2
+  },
+  {
+   "date": "2006-08-21",
+   "actual": 6264.7,
+   "predicted": 6431.2
+  },
+  {
+   "date": "2006-08-29",
+   "actual": 6554.5,
+   "predicted": 6354.7
+  },
+  {
+   "date": "2006-09-11",
+   "actual": 5908.9,
+   "predicted": 6168.6
+  },
+  {
+   "date": "2006-09-14",
+   "actual": 6041.9,
+   "predicted": 5828.1
+  },
+  {
+   "date": "2006-09-16",
+   "actual": 6317.9,
+   "predicted": 6512.2
+  },
+  {
+   "date": "2006-09-21",
+   "actual": 6898.2,
+   "predicted": 6440.8
+  },
+  {
+   "date": "2006-09-24",
+   "actual": 6049.0,
+   "predicted": 6129.8
+  },
+  {
+   "date": "2006-09-30",
+   "actual": 6066.6,
+   "predicted": 5706.2
+  },
+  {
+   "date": "2006-10-01",
+   "actual": 6639.0,
+   "predicted": 5534.6
+  },
+  {
+   "date": "2006-10-14",
+   "actual": 4021.4,
+   "predicted": 5357.5
+  },
+  {
+   "date": "2006-11-06",
+   "actual": 5616.6,
+   "predicted": 5234.0
+  },
+  {
+   "date": "2006-11-12",
+   "actual": 5004.2,
+   "predicted": 4959.4
+  },
+  {
+   "date": "2006-11-21",
+   "actual": 4912.8,
+   "predicted": 5032.4
+  },
+  {
+   "date": "2006-12-08",
+   "actual": 5099.7,
+   "predicted": 5178.1
+  },
+  {
+   "date": "2006-12-22",
+   "actual": 1495.1,
+   "predicted": 2554.2
+  }
+ ],
+ "shortUnit": "daily output"
+}

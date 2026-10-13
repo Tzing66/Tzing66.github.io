@@ -6,8 +6,8 @@ export const site = {
   name: "Tanmay Singh",
   nickname: "Tanz",
   role: "Data Engineer · MLOps · AI systems",
-  pitch: "", // TODO(Tanz): one sentence
-  location: "India · remote or sponsored relocation",
+  pitch: "I build reliable data pipelines and the platforms around them, from 10M+ record banking systems to AI products.",
+  location: "India · open to remote & relocation",
   email: "tanmay.work10@gmail.com",
   url: "https://tzing66.github.io",
   links: {
@@ -36,10 +36,12 @@ export type SectionId = (typeof sections)[number]["id"];
 
 export const about = {
   paragraphs: [
-    // TODO(Tanz): 2–3 short paragraphs
+    "I'm a data engineer with a background in MLOps. At Capgemini I spent two and a half years on HSBC UK's application data management team, running Airflow pipelines over 10M+ customer credit records a month and cutting batch runtime by 40%.",
+    "After an MS in Data Science, Analytics and Engineering at Arizona State, I joined Vault IQ, where I designed the Supabase data model behind an AI brand-development platform and wired LLM and image-generation APIs into production.",
+    "Outside work I build things end to end, like CheckYourAQI, an air-quality forecaster that runs unattended on AWS, and Mettle, the workout tracker I'm building now.",
   ] as string[],
-  photo: "", // TODO(Tanz): optional, e.g. "/me.jpg"
-  facts: ["📍 Based in India", "🌍 Remote or sponsored relocation", "🛠 MLOps & Data Engineering", "🎓 MS @ Arizona State", "💻 BTech CSE @ Manipal"],
+  photo: "", // optional, e.g. "/me.jpg"
+  facts: ["📍 Based in India", "🌍 Open to remote & relocation", "🛠 MLOps & Data Engineering", "🎓 MS @ Arizona State", "💻 BTech CSE @ Manipal"],
 };
 
 export const experience = [
@@ -50,34 +52,39 @@ export const experience = [
     location: "Remote",
     period: "Dec 2025 – May 2026",
     bullets: [
-      // TODO(Tanz): 2–3 bullet points describing impact
+      "Designed the Supabase schemas and storage for user, brand, product and social data, giving 4+ product modules one structured data flow",
+      "Built an AI brand-development platform orchestrating OpenAI, Gemini and Flux Pro for automated content and product visualisation",
+      "Shipped a production chatbot with a custom knowledge-base layer, and an AI photoshoot system that plans with an LLM and renders with image models while preserving product fidelity",
+      "Built the membership dashboard backend serving brand, catalogue and revenue metrics in real time, and integrated 6+ external APIs",
     ] as string[],
-    stack: [] as string[],
+    stack: ["Supabase", "PostgreSQL", "OpenAI", "Gemini", "Flux Pro"] as string[],
   },
   {
     role: "Data Engineer",
     company: "Capgemini",
-    detail: "HSBC UK account · Application Data Management",
+    detail: "HSBC UK · Application Data Management",
     location: "",
     period: "Oct 2020 – Mar 2023",
     bullets: [
-      "Optimized SQL queries and wrote SCD logic to meet ETL SLAs",
-      // TODO(Tanz): any metrics
+      "Built and orchestrated Airflow ETL pipelines for HSBC's customer credit data systems",
+      "Processed 10M+ customer records a month across BigQuery and PostgreSQL environments",
+      "Cut batch pipeline runtime by 40% by optimising BigQuery queries and storage, and wrote SCD logic to meet ETL SLAs",
+      "Added PySpark validation and data-quality checks aligned with credit-risk models, plus monitoring that flags anomalies before they reach production",
     ],
-    stack: ["SQL", "Python", "Spark", "Airflow"],
+    stack: ["Airflow", "BigQuery", "PostgreSQL", "Python", "PySpark", "SQL"],
   },
 ];
 
 export const education = [
   {
-    degree: "MSc, Data Science and Analytics Engineering",
+    degree: "MS, Data Science, Analytics and Engineering",
     school: "Arizona State University",
-    period: "", // TODO(Tanz): optional years
+    period: "", // optional years
   },
   {
-    degree: "BTech, Computer Science Engineering",
+    degree: "BTech, Computer Science and Engineering",
     school: "Manipal University Jaipur",
-    period: "", // TODO(Tanz): optional years
+    period: "", // optional years
   },
 ];
 
@@ -86,12 +93,18 @@ export type ProjectTag = "Data Eng" | "ML" | "AI" | "Analytics" | "Mobile";
 export type Project = {
   repo: string; // owner/name on GitHub
   slug: string; // URL id (#projects/<slug>) and write-up file: src/content/projects/<slug>.md
-  featured?: boolean; // large card
   title?: string; // overrides the repo name
   tagline?: string; // falls back to the GitHub description
   status?: "live" | "building" | "complete" | "archived";
   demo?: string;
-  image?: string; // landscape screenshot under public/
+  image?: string; // landscape image under public/ for the card
+  imageFit?: "cover" | "contain"; // contain for diagrams that mustn't be cropped
+  imageBg?: string; // panel colour behind a contained image
+  credit?: string; // attribution shown with images (e.g. map data)
+  chart?: "solar" | "mesa"; // a data chart as the card visual (src/content/charts/<name>.json)
+  flow?: string[]; // pipeline steps drawn as a diagram when there's no image
+  gallery?: { src: string; caption: string }[]; // extra images in the write-up
+  charts?: ("solar" | "mesa")[]; // full-size charts (with data table) in the write-up
   icon?: string; // app icon under public/ (placeholder when there are no screenshots yet)
   screens?: string[]; // phone screenshots under public/, shown as a gallery
   note?: string; // short status line, e.g. "In development — not public yet"
@@ -110,7 +123,6 @@ export const projects: Project[] = [
   {
     repo: "Tzing66/mettle",
     slug: "mettle",
-    featured: true,
     title: "Mettle",
     tagline: "Gamified workout tracker: show up to earn XP, hit real benchmarks to earn a lot of it, climb from E to S rank",
     status: "building",
@@ -136,29 +148,18 @@ export const projects: Project[] = [
     tags: ["Mobile"],
   },
   {
-    repo: "Tzing66/CheckYourData",
-    slug: "checkyourdata",
-    featured: true,
-    title: "CheckYourData",
-    tagline: "Data quality checks, suggested by an AI agent",
-    status: "building",
-    demo: "", // TODO(Tanz): Render URL if you want it linked
-    highlights: [
-      "Upload a dataset; an agent reads the schema and proposes validation checks",
-      "Approve or edit suggestions alongside preset checks",
-    ],
-    stack: ["React", "FastAPI", "Postgres", "Claude API", "Docker"],
-    tags: ["Data Eng", "AI"],
-  },
-  {
     repo: "Tzing66/checkyouraqi",
     slug: "checkyouraqi",
-    featured: true,
     title: "CheckYourAQI",
     tagline: "PM2.5 forecasts 24–72h ahead for 70 Delhi NCR monitoring stations",
     status: "live",
     demo: "https://checkyouraqi.streamlit.app",
-    image: "/projects/checkyouraqi.jpg",
+    image: "/projects/aqi/overview.webp",
+    gallery: [
+      { src: "/projects/aqi/overview.webp", caption: "Dashboard: city average now, tomorrow's forecast and every station on a map" },
+      { src: "/projects/aqi/model-health.webp", caption: "Forecast accuracy page: live error against simple baselines" },
+      { src: "/projects/aqi/station.webp", caption: "A station page during the OpenAQ outage, labelled as stale rather than hidden" },
+    ],
     highlights: [
       "Hourly ingestion into an S3/Iceberg lakehouse modelled with 27 dbt models on Athena",
       "LightGBM forecaster with leakage-checked training and champion/challenger promotion",
@@ -168,12 +169,52 @@ export const projects: Project[] = [
     tags: ["Data Eng", "ML"],
   },
   {
+    repo: "Tzing66/mesa-transit-expansion-emissions-analysis",
+    slug: "mesa-transit",
+    title: "Mesa Transit Expansion & Emissions",
+    tagline: "GIS transit planning and CO₂ modelling for underserved Mesa, AZ · ASU graduate project",
+    status: "complete",
+    image: "/projects/mesa/proposed-routes.webp",
+    credit: "Map data © OpenStreetMap contributors",
+    gallery: [
+      { src: "/projects/mesa/no-bus-areas.webp", caption: "Census tracts with no bus service (dark), over Mesa's existing routes" },
+      { src: "/projects/mesa/existing-routes.webp", caption: "Existing routes and stops" },
+      { src: "/projects/mesa/proposed-routes.webp", caption: "Five proposed routes and 45 stops covering the gaps" },
+      { src: "/projects/mesa/buffer-overlap.webp", caption: "500 m walking buffers around the new routes, intersected with tracts" },
+    ],
+    charts: ["mesa"],
+    highlights: [
+      "Mapped transit gaps across census tracts in QGIS and designed 5 new bus routes with 45 stops for 63,413 underserved residents",
+      "Modelled diesel vs electric buses at 5–15% ridership uptake: about 8,000 t of CO₂ saved per year on average",
+      "Combined census (ACS), OpenStreetMap, ridership and city budget data into one pipeline for mapping and cost estimates",
+    ],
+    stack: ["QGIS", "Python", "GeoPandas", "pandas", "Matplotlib"],
+    tags: ["Analytics", "Data Eng"],
+  },
+  {
+    repo: "Tzing66/CheckYourData",
+    slug: "checkyourdata",
+    title: "CheckYourData",
+    tagline: "Data quality checks, suggested by an AI agent",
+    status: "complete",
+    flow: ["Upload a CSV", "Profile the schema", "Claude proposes checks", "You review & approve", "Run checks · track drift"],
+    highlights: [
+      "Upload a dataset; an agent reads the schema and a sample, and proposes validation checks via forced tool use",
+      "Approve or edit suggestions alongside preset checks; results are kept as history with drift over time",
+      "Suggestions cached in Postgres by schema hash: a repeat call returns in ~40 ms instead of ~4 s",
+    ],
+    stack: ["React", "FastAPI", "Postgres", "Claude API", "Docker"],
+    tags: ["Data Eng", "AI"],
+  },
+  {
     repo: "Tzing66/Real-Time-Clickstream-Analytics-Pipeline-on-AWS",
     slug: "clickstream",
-    featured: true,
     title: "Real-Time Clickstream Analytics",
     tagline: "Serverless streaming pipeline on AWS, from simulated clicks to queryable partitions",
     status: "complete",
+    image: "/projects/clickstream/step-functions.webp",
+    imageFit: "contain",
+    imageBg: "#161d26",
     highlights: [
       "Kinesis + Lambda ingestion of simulated clickstream events into a raw S3 zone",
       "Glue ETL flattens and partitions by date; Athena repairs and queries the table",
@@ -183,40 +224,46 @@ export const projects: Project[] = [
     tags: ["Data Eng"],
   },
   {
-    repo: "Tzing66/job_matching_agent",
-    slug: "job-matching-agent",
-    title: "Job Matching Agent",
-    tagline: "Fetches and scores job postings against my resumes",
-    status: "building",
-    stack: ["Python", "Claude API", "Adzuna API", "SQLite", "Excel"],
-    tags: ["AI"],
-  },
-  {
     repo: "Tzing66/Solar-Intensity-Model",
     slug: "solar-intensity",
     title: "Solar Intensity Model",
-    tagline: "Regression model predicting solar power output in Phoenix, AZ",
+    tagline: "Forecasting daily solar output in Phoenix, AZ from weather data",
     status: "complete",
-    stack: ["Python", "scikit-learn", "pvlib", "NASA POWER API"],
+    chart: "solar",
+    charts: ["solar"],
+    highlights: [
+      "Merged NASA POWER weather data and pvlib daylight hours with NREL plant output for 2006",
+      "Compared linear, RFECV-selected linear and polynomial regression; plain linear won with R² 0.83 and ~9% average error",
+      "Solar radiation carries most of the signal; daylight hours are a distant second",
+    ],
+    stack: ["Python", "pandas", "scikit-learn", "pvlib", "Matplotlib"],
     tags: ["ML"],
   },
   {
-    repo: "Tzing66/mesa-transit-expansion-emissions-analysis",
-    slug: "mesa-transit",
-    title: "Mesa Transit Expansion & Emissions",
-    tagline: "GIS transit planning and CO₂ impact modelling for underserved Mesa, AZ (ASU grad project)",
-    status: "complete",
-    stack: ["QGIS", "Python", "GeoPandas", "Matplotlib"],
-    tags: ["Analytics"],
+    repo: "Tzing66/job_matching_agent",
+    slug: "job-matching-agent",
+    title: "Job Matching Agent",
+    tagline: "A personal agent that fetches job postings and has Claude score them against my profiles",
+    status: "building",
+    flow: ["Adzuna API", "Profile filters", "SQLite · seen jobs", "Claude batch scoring", "Excel tracker"],
+    highlights: [
+      "Pulls postings from the Adzuna API for four keyword profiles, searched in a fixed priority order",
+      "Remembers every job it has seen in SQLite, so each run surfaces only new postings",
+      "Scores each shortlist with one batched Claude call and appends the results to an Excel tracker",
+    ],
+    stack: ["Python", "Claude API", "Adzuna API", "SQLite", "Excel"],
+    tags: ["AI"],
   },
 ];
 
-// TODO(Tanz): confirm the final list.
+// From the resume's skills plus what the projects actually use.
 export const stack = [
-  { group: "Languages", items: ["Python", "SQL"] },
-  { group: "Data", items: ["Spark", "Airflow", "Postgres", "dbt"] },
-  { group: "ML/AI", items: ["FastAPI", "Claude API", "scikit-learn", "LightGBM"] },
-  { group: "Cloud & DevOps", items: ["AWS", "Docker", "GitHub Actions"] },
+  { group: "Languages", items: ["Python", "SQL", "TypeScript"] },
+  { group: "Data & warehousing", items: ["PostgreSQL", "BigQuery", "Supabase", "dbt"] },
+  { group: "Pipelines & processing", items: ["Airflow", "Spark", "pandas"] },
+  { group: "ML & AI", items: ["scikit-learn", "LightGBM", "Claude API", "Gemini", "OpenAI"] },
+  { group: "Cloud & DevOps", items: ["AWS", "Google Cloud", "Docker", "GitHub Actions", "Git"] },
+  { group: "Apps & APIs", items: ["FastAPI", "React", "React Native", "Streamlit"] },
 ];
 
 // Plain strings, or { text, href } to make an item a link (e.g. to a project write-up).
@@ -235,7 +282,7 @@ export const music = {
 
 // Extra small cards for the Now bento grid (a book, a game, gym stats…). Empty = none shown.
 export const nowExtras: { label: string; title: string; text?: string; href?: string }[] = [
-  // TODO(Tanz): e.g. { label: "Reading", title: "Designing Data-Intensive Applications", text: "Kleppmann" },
+  // e.g. { label: "Reading", title: "Designing Data-Intensive Applications", text: "Kleppmann" },
 ];
 
 export const contact = {
