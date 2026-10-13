@@ -1,52 +1,78 @@
 ---
+// One journey timeline: jobs and degrees merged newest-first by start date. Degrees are
+// deliberately quieter (hollow marker, lighter card) so the work stays the focus.
 import { experience, education } from "../content/site.config";
+
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+// "Aug 2023 – May 2025" → 202307 (sortable start key)
+const start = (period: string) => {
+  const [mon, year] = period.trim().split(/\s+/);
+  return Number(year) * 100 + months.indexOf(mon.slice(0, 3));
+};
+
+type Entry =
+  | { kind: "job"; key: number; job: (typeof experience)[number] }
+  | { kind: "edu"; key: number; edu: (typeof education)[number] };
+
+const entries: Entry[] = [
+  ...experience.map((job) => ({ kind: "job" as const, key: start(job.period), job })),
+  ...education.map((edu) => ({ kind: "edu" as const, key: start(edu.period), edu })),
+].sort((a, b) => b.key - a.key);
 ---
 
 <ol data-stagger class="relative space-y-6 border-l border-line pl-6 sm:pl-8">
   {
-    experience.map((job) => (
-      <li class="relative">
-        <span class="absolute top-6 -left-[calc(1.5rem+5px)] size-2.5 rounded-full border-2 border-accent bg-bg sm:-left-[calc(2rem+5px)]" aria-hidden="true" />
-        <article class="rounded-xl border border-line bg-surface p-5 sm:p-6">
-          <p class="font-mono text-xs text-muted">
-            {job.period}
-            {job.location && ` · ${job.location}`}
-          </p>
-          <h3 class="mt-1.5 text-lg font-semibold tracking-tight">{job.role}</h3>
-          <p class="text-accent-ink">{job.company}</p>
-          {job.detail && <p class="text-sm text-muted">{job.detail}</p>}
-          {job.bullets.length > 0 && (
-            <ul class="mt-4 space-y-1.5 text-sm">
-              {job.bullets.map((b) => (
-                <li class="flex gap-2">
-                  <span class="text-accent-ink">›</span>
-                  {b}
-                </li>
-              ))}
-            </ul>
-          )}
-          {job.stack.length > 0 && (
-            <ul class="mt-4 flex flex-wrap gap-1.5" aria-label="Tech used">
-              {job.stack.map((s) => (
-                <li class="rounded border border-line px-2 py-0.5 font-mono text-[11px] text-muted">{s}</li>
-              ))}
-            </ul>
-          )}
-        </article>
-      </li>
-    ))
+    entries.map((e) =>
+      e.kind === "job" ? (
+        <li class="relative">
+          <span class="absolute top-6 -left-[calc(1.5rem+5px)] size-2.5 rounded-full border-2 border-accent bg-bg sm:-left-[calc(2rem+5px)]" aria-hidden="true" />
+          <article class="rounded-xl border border-line bg-surface p-5 sm:p-6">
+            <p class="font-mono text-xs text-muted">
+              {e.job.period}
+              {e.job.location && ` · ${e.job.location}`}
+            </p>
+            <h3 class="mt-1.5 text-lg font-semibold tracking-tight">{e.job.role}</h3>
+            <p class="text-accent-ink">{e.job.company}</p>
+            {e.job.detail && <p class="text-sm text-muted">{e.job.detail}</p>}
+            {e.job.bullets.length > 0 && (
+              <ul class="mt-4 space-y-1.5 text-sm">
+                {e.job.bullets.map((b) => (
+                  <li class="flex gap-2">
+                    <span class="text-accent-ink">›</span>
+                    {b}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {e.job.stack.length > 0 && (
+              <ul class="mt-4 flex flex-wrap gap-1.5" aria-label="Tech used">
+                {e.job.stack.map((s) => (
+                  <li class="rounded border border-line px-2 py-0.5 font-mono text-[11px] text-muted">{s}</li>
+                ))}
+              </ul>
+            )}
+          </article>
+        </li>
+      ) : (
+        <li class="relative">
+          <span
+            class="absolute top-4 -left-[calc(1.5rem+11px)] grid size-[22px] place-items-center rounded-full border border-line bg-bg text-muted sm:-left-[calc(2rem+11px)]"
+            aria-hidden="true"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 10 12 5 2 10l10 5 10-5Z" />
+              <path d="M6 12v5c3 2 9 2 12 0v-5" />
+            </svg>
+          </span>
+          <article class="rounded-xl border border-dashed border-line px-5 py-4 sm:px-6">
+            <p class="font-mono text-xs text-muted">
+              {e.edu.period} · education
+            </p>
+            <h3 class="mt-1 font-semibold tracking-tight">{e.edu.degree}</h3>
+            <p class="text-sm text-muted">{e.edu.school}</p>
+          </article>
+        </li>
+      ),
+    )
   }
 </ol>
-
-<h3 data-reveal class="mt-14 mb-4 font-mono text-xs tracking-wide text-muted">// education</h3>
-<ul data-stagger class="grid gap-4 sm:grid-cols-2">
-  {
-    education.map((e) => (
-      <li class="rounded-xl border border-line bg-surface p-5">
-        {e.period && <p class="font-mono text-xs text-muted">{e.period}</p>}
-        <p class="font-semibold">{e.degree}</p>
-        <p class="text-sm text-muted">{e.school}</p>
-      </li>
-    ))
-  }
-</ul>

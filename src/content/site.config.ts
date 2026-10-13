@@ -75,16 +75,17 @@ export const experience = [
   },
 ];
 
+// Merged into the Experience timeline by start date, so `period` must start with "Mon YYYY".
 export const education = [
   {
     degree: "MS, Data Science, Analytics and Engineering",
     school: "Arizona State University",
-    period: "", // optional years
+    period: "Aug 2023 – May 2025",
   },
   {
     degree: "BTech, Computer Science and Engineering",
     school: "Manipal University Jaipur",
-    period: "", // optional years
+    period: "Aug 2016 – May 2020",
   },
 ];
 
