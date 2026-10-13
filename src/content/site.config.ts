@@ -37,7 +37,7 @@ export type SectionId = (typeof sections)[number]["id"];
 export const about = {
   paragraphs: [
     "I'm a data engineer with a background in MLOps. At Capgemini I spent two and a half years on HSBC UK's application data management team, running Airflow pipelines over 10M+ customer credit records a month and cutting batch runtime by 40%.",
-    "After an MS in Data Science, Analytics and Engineering at Arizona State, I joined Vault IQ, where I designed the Supabase data model behind an AI brand-development platform and wired LLM and image-generation APIs into production.",
+    "After an MS in Data Science, Analytics and Engineering at Arizona State, I joined Vault IQ and worked across the stack on an AI brand-development platform: the Supabase data model, the backend and UI, and the agents that turn LLM and image-generation models into brand content and product shots.",
     "Outside work I build things end to end, like CheckYourAQI, an air-quality forecaster that runs unattended on AWS, and Mettle, the workout tracker I'm building now.",
   ] as string[],
   photo: "", // optional, e.g. "/me.jpg"
@@ -48,14 +48,14 @@ export const experience = [
   {
     role: "Data Engineer (AI & Backend Systems)",
     company: "Vault IQ",
-    detail: "",
+    detail: "Full stack · data, backend and product UI",
     location: "Remote",
     period: "Dec 2025 – May 2026",
     bullets: [
-      "Designed the Supabase schemas and storage for user, brand, product and social data, giving 4+ product modules one structured data flow",
-      "Built an AI brand-development platform orchestrating OpenAI, Gemini and Flux Pro for automated content and product visualisation",
-      "Shipped a production chatbot with a custom knowledge-base layer, and an AI photoshoot system that plans with an LLM and renders with image models while preserving product fidelity",
-      "Built the membership dashboard backend serving brand, catalogue and revenue metrics in real time, and integrated 6+ external APIs",
+      "Worked across the stack, from the Supabase schemas for user, brand, product and social data (4+ modules) to the backend services and product UI built on them",
+      "Sped up the AI brand-generation pipeline, orchestrating OpenAI, Gemini and Flux Pro to produce brand content and product visuals",
+      "Built a photoshoot agent that takes generated product images and stages them in marketing-ready settings, from hero shots to styled scenes, while keeping the product true to the original",
+      "Built the production chatbot with a custom knowledge-base layer, plus the dashboard backend serving brand, catalogue and revenue metrics in real time, integrating 6+ external APIs",
     ] as string[],
     stack: ["Supabase", "PostgreSQL", "OpenAI", "Gemini", "Flux Pro"] as string[],
   },
