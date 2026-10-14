@@ -317,7 +317,7 @@ export const nowExtras: { label: string; title: string; text?: string; href?: st
 export const booth = {
   src: "/photobooth/",
   poster: "/projects/photobooth/retro.webp",
-  blurb: "This is my Photobooth project, running live. Step inside, strike four poses, and take your strip home.",
+  blurb: "I was tired of finding photobooths in my own country, so I made one for myself. It is just a silly little project I whipped up on a Saturday afternoon. Try it!",
   privacy: "Everything happens in your browser. Your photos never leave your device.",
 };
 
