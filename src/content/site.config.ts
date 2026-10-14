@@ -29,6 +29,7 @@ export const sections = [
   { id: "projects", label: "Projects", stage: "serve" },
   { id: "stack", label: "Stack", stage: "compute" },
   { id: "now", label: "Now", stage: "monitor" },
+  { id: "booth", label: "Booth", stage: "play" },
   { id: "contact", label: "Contact", stage: "sink" },
 ] as const;
 
@@ -89,7 +90,7 @@ export const education = [
   },
 ];
 
-export type ProjectTag = "Data Eng" | "ML" | "AI" | "Analytics" | "Mobile";
+export type ProjectTag = "Data Eng" | "ML" | "AI" | "Analytics" | "Mobile" | "Web";
 
 export type Project = {
   repo: string; // owner/name on GitHub
@@ -109,6 +110,7 @@ export type Project = {
   icon?: string; // app icon under public/ (placeholder when there are no screenshots yet)
   screens?: string[]; // phone screenshots under public/, shown as a gallery
   note?: string; // short status line, e.g. "In development — not public yet"
+  noteHref?: string; // makes the note a link (e.g. to an on-page section)
   cta?: { label: string; href: string }; // primary call to action on the card and write-up
   highlights?: string[];
   stack?: string[];
@@ -147,6 +149,31 @@ export const projects: Project[] = [
     ],
     stack: ["React Native", "Expo", "TypeScript", "SQLite", "Supabase", "Postgres"],
     tags: ["Mobile"],
+  },
+  {
+    repo: "Tzing66/photobooth",
+    slug: "photobooth",
+    title: "Photobooth",
+    tagline: "A vintage photobooth in the browser: four poses, one developed photostrip, six booth themes",
+    status: "live",
+    demo: "/photobooth/",
+    note: "Try it live on this page ↓",
+    noteHref: "#booth",
+    image: "/projects/photobooth/retro.webp",
+    gallery: [
+      { src: "/projects/photobooth/retro.webp", caption: "Retro '70s booth: the front of the machine, with sample strips and the curtain" },
+      { src: "/projects/photobooth/darkroom.webp", caption: "Darkroom theme, under the safelight" },
+      { src: "/projects/photobooth/sketch.webp", caption: "Sketchbook theme, drawn with boiling hand-drawn lines" },
+      { src: "/projects/photobooth/arcade.webp", caption: "Pixel Arcade theme" },
+      { src: "/projects/photobooth/photoboy.webp", caption: "Photo Boy handheld theme" },
+    ],
+    highlights: [
+      "Take four shots with a countdown and flash, or upload four, and get back a developed strip with film toning, grain and halation",
+      "On-device person cut-out (MediaPipe selfie segmenter, self-hosted) puts you in front of painted backdrops",
+      "Runs entirely in the browser: photos never leave your device; save, share, print or cut the strip into singles",
+    ],
+    stack: ["React", "TypeScript", "Canvas", "MediaPipe", "IndexedDB", "Vite"],
+    tags: ["Web"],
   },
   {
     repo: "Tzing66/checkyouraqi",
@@ -285,6 +312,14 @@ export const music = {
 export const nowExtras: { label: string; title: string; text?: string; href?: string }[] = [
   // e.g. { label: "Reading", title: "Designing Data-Intensive Applications", text: "Kleppmann" },
 ];
+
+// The live booth embedded in its own section (loaded only when a visitor steps inside).
+export const booth = {
+  src: "/photobooth/",
+  poster: "/projects/photobooth/retro.webp",
+  blurb: "This is my Photobooth project, running live. Step inside, strike four poses, and take your strip home.",
+  privacy: "Everything happens in your browser. Your photos never leave your device.",
+};
 
 export const contact = {
   blurb: "Hiring for a data or ML platform role, or just want to talk pipelines? Reach out.",

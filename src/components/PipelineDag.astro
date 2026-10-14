@@ -3,25 +3,27 @@
 // Pure SVG + SMIL: renders and animates with zero JS. Reduced motion hides the dots (CSS).
 import { sections } from "../content/site.config";
 
-// Layout only (not content): node centres in a 360×440 viewBox, keyed by section id.
+// Layout only (not content): node centres in a 360×456 viewBox, keyed by section id.
 const pos: Record<string, [number, number]> = {
   about: [180, 28],
-  experience: [180, 118],
-  projects: [92, 208],
-  stack: [268, 208],
-  now: [180, 298],
-  contact: [180, 388],
+  experience: [180, 108],
+  projects: [92, 188],
+  stack: [268, 188],
+  now: [180, 268],
+  booth: [180, 348],
+  contact: [180, 428],
 };
 // [from, to, arrival time as a fraction of the cycle]
 const edges: [string, string, number, number][] = [
-  ["about", "experience", 0.04, 0.2],
-  ["experience", "projects", 0.24, 0.44],
-  ["experience", "stack", 0.24, 0.44],
-  ["projects", "now", 0.48, 0.68],
-  ["stack", "now", 0.48, 0.68],
-  ["now", "contact", 0.72, 0.88],
+  ["about", "experience", 0.03, 0.17],
+  ["experience", "projects", 0.2, 0.36],
+  ["experience", "stack", 0.2, 0.36],
+  ["projects", "now", 0.39, 0.55],
+  ["stack", "now", 0.39, 0.55],
+  ["now", "booth", 0.58, 0.72],
+  ["booth", "contact", 0.75, 0.89],
 ];
-const PERIOD = "4.8s";
+const PERIOD = "5.4s";
 const W = 124;
 const H = 36;
 
@@ -46,7 +48,7 @@ const clamp = (t: number) => Math.min(Math.max(t, 0), 1).toFixed(3);
 ---
 
 <nav aria-label="Section pipeline" class="hidden lg:block">
-  <svg viewBox="0 0 360 416" width="360" height="416" class="overflow-visible">
+  <svg viewBox="0 0 360 456" width="360" height="456" class="overflow-visible">
     {
       edges.map(([a, b], i) => (
         <path id={`dag-edge-${i}`} class="dag-edge" d={edgePath(a, b)} />

@@ -1,0 +1,72 @@
+---
+// The Photobooth app, live on the page. It's served from the same origin (/photobooth/), so it
+// can be framed with camera access. Nothing loads until the visitor steps inside: the app pulls
+// in a ~25 MB on-device segmentation model, and the camera prompt should never be a surprise.
+import { booth } from "../content/site.config";
+---
+
+<div data-booth data-src={booth.src} class="overflow-hidden rounded-xl border border-line bg-surface">
+  <div class="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-5">
+    <p class="flex items-center gap-2 font-mono text-[11px] text-muted">
+      <span class="size-1.5 rounded-full bg-accent" aria-hidden="true"></span>
+      <span data-booth-status>photobooth · ready</span>
+    </p>
+    <div class="flex items-center gap-4 font-mono text-xs">
+      <a href={booth.src} target="_blank" rel="noopener" class="text-muted transition-colors hover:text-accent-ink">↗ open full screen</a>
+      <button type="button" data-booth-close hidden class="text-muted transition-colors hover:text-accent-ink">✕ step out</button>
+    </div>
+  </div>
+
+  <div data-booth-stage class="relative h-[min(82dvh,760px)] min-h-[520px] bg-bg">
+    <!-- Poster: a picture of the booth. Swapped for the live app on click. -->
+    <div data-booth-poster class="absolute inset-0">
+      <img src={booth.poster} alt="The Photobooth's retro '70s booth front" loading="lazy" decoding="async" width="1200" height="760" class="size-full object-cover opacity-60" />
+      <div class="absolute inset-0 bg-gradient-to-t from-bg via-bg/75 to-bg/10"></div>
+      <div class="absolute inset-x-0 bottom-0 flex flex-col items-center gap-4 p-6 text-center sm:p-10">
+        <p class="max-w-md text-fg">{booth.blurb}</p>
+        <button
+          type="button"
+          data-booth-open
+          class="inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 font-medium text-on-accent shadow-lg transition hover:brightness-110"
+        >
+          Step inside <span aria-hidden="true">→</span>
+        </button>
+        <p class="font-mono text-[11px] text-muted">{booth.privacy}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-booth]").forEach((root) => {
+    const stage = root.querySelector<HTMLElement>("[data-booth-stage]")!;
+    const poster = root.querySelector<HTMLElement>("[data-booth-poster]")!;
+    const openBtn = root.querySelector<HTMLButtonElement>("[data-booth-open]")!;
+    const closeBtn = root.querySelector<HTMLButtonElement>("[data-booth-close]")!;
+    const status = root.querySelector<HTMLElement>("[data-booth-status]")!;
+    const src = root.dataset.src!;
+
+    openBtn.addEventListener("click", () => {
+      const frame = document.createElement("iframe");
+      frame.src = src;
+      frame.title = "Photobooth app";
+      // camera for the shots, web-share for "save to Photos" on phones, fullscreen for the booth.
+      frame.allow = "camera; fullscreen; web-share; clipboard-write";
+      frame.className = "absolute inset-0 size-full border-0";
+      frame.addEventListener("load", () => frame.focus(), { once: true });
+      poster.hidden = true;
+      stage.append(frame);
+      closeBtn.hidden = false;
+      status.textContent = "photobooth · live";
+    });
+
+    // Removing the iframe also releases the camera.
+    closeBtn.addEventListener("click", () => {
+      stage.querySelector("iframe")?.remove();
+      poster.hidden = false;
+      closeBtn.hidden = true;
+      status.textContent = "photobooth · ready";
+      openBtn.focus();
+    });
+  });
+</script>
