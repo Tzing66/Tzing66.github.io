@@ -308,6 +308,7 @@ export const music = {
   enabled: true,
   nowPlayingUrl: "https://now-playing.now-playing-worker.workers.dev/now", // the Worker (worker/); empty = snapshot only
   pollSeconds: 30,
+  layout: "A" as "A" | "B", // A: tall card beside GitHub activity · B: wide hero card, GitHub below
 };
 
 // Extra small cards for the Now bento grid (a book, a game, gym stats…). Empty = none shown.

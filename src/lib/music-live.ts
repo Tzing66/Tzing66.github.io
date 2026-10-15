@@ -32,6 +32,9 @@ export function initMusicLive() {
     $<HTMLAnchorElement>("[data-hero]").href = t.url;
     const img = $<HTMLImageElement>("[data-hero-img]");
     if (t.image && img.src !== t.image) img.src = t.image;
+    // Layout B paints a blurred copy of the art behind the hero.
+    const bg = card.querySelector<HTMLImageElement>("[data-hero-bg]");
+    if (bg && t.image && bg.src !== t.image) bg.src = t.image;
     $("[data-hero-title]").textContent = t.title;
     $("[data-hero-artist]").textContent = t.artist;
     $("[data-hero-album]").textContent = t.album;

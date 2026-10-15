@@ -1,22 +1,24 @@
 ---
 // Bento grid for the Now section. Cards with no data simply don't render.
 import MusicCard from "./MusicCard.astro";
+import MusicCardB from "./MusicCardB.astro";
 import GithubActivity from "./GithubActivity.astro";
-import { currently, nowExtras } from "../content/site.config";
+import { currently, nowExtras, music as musicConfig } from "../content/site.config";
 import { music } from "../lib/music";
 import { activity } from "../lib/github";
 
 const card = "rounded-xl border border-line bg-surface p-5";
 const hasActivity = !!activity && (activity.days.length > 0 || !!activity.lastPush);
+const wide = !!music && musicConfig.layout === "B";
 ---
 
 <div data-stagger class="grid gap-4 lg:grid-cols-3">
-  {music && <MusicCard class="lg:row-span-2" />}
-  {hasActivity && <GithubActivity class="lg:col-span-2" />}
+  {music && (wide ? <MusicCardB class="lg:col-span-2" /> : <MusicCard class="lg:row-span-2" />)}
+  {hasActivity && !wide && <GithubActivity class="lg:col-span-2" />}
 
   {
     currently.length > 0 && (
-      <article class:list={[card, music && nowExtras.length === 0 && "lg:col-span-2"]}>
+      <article class:list={[card, music && !wide && nowExtras.length === 0 && "lg:col-span-2"]}>
         <h3 class="mb-3 font-mono text-xs tracking-wide text-muted">Currently</h3>
         <ul class="space-y-1.5 text-sm">
           {currently.map((c) => (
@@ -51,4 +53,5 @@ const hasActivity = !!activity && (activity.days.length > 0 || !!activity.lastPu
       </article>
     ))
   }
+  {hasActivity && wide && <GithubActivity class="lg:col-span-3" />}
 </div>
