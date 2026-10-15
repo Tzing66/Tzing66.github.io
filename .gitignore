@@ -26,3 +26,6 @@ pnpm-debug.log*
 # Local docs (plan, agent notes) stay off GitHub; project write-ups are site content and must ship.
 *.md
 !src/content/projects/*.md
+
+# Generated at build time from Spotify; never committed
+src/data/music.json

@@ -5,12 +5,13 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: "0 */6 * * *" # rebuild every 6h to refresh GitHub + Last.fm data
+    - cron: "0 */6 * * *" # rebuild every 6h to refresh GitHub + Spotify snapshot data
 
 permissions:
   contents: read
   pages: write
   id-token: write
+  issues: write # to flag an expired Spotify token
 
 concurrency:
   group: pages
@@ -32,20 +33,35 @@ jobs:
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # music.json isn't committed, so carry the last good copy between runs: if Last.fm is
-      # down this run, the card shows the previous snapshot instead of disappearing.
+      # music.json isn't committed, so carry the last good copy between runs: if Spotify is
+      # unreachable this run, the card shows the previous snapshot instead of disappearing.
       - name: Restore last music snapshot
         uses: actions/cache/restore@v6
         with:
           path: src/data/music.json
           key: music-${{ github.run_id }}
           restore-keys: music-
-      # Listening data for the Now section; without the secret the card keeps cached data or hides.
-      - name: Fetch Last.fm data
-        run: npm run fetch:lastfm
+      # Listening snapshot for the Now section (live "now playing" comes from the Worker).
+      # The script exits non-zero ONLY when the refresh token has expired.
+      - name: Fetch Spotify data
+        id: spotify
+        run: npm run fetch:spotify
         continue-on-error: true
         env:
-          LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
+      # Opening an issue emails the owner; skip if one is already open.
+      - name: Flag expired Spotify token
+        if: steps.spotify.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Spotify token expired: run npm run spotify:auth -- --push"
+          if [ -z "$(gh issue list -R "$GITHUB_REPOSITORY" --state open --search "$title in:title" --json number --jq '.[].number')" ]; then
+            gh issue create -R "$GITHUB_REPOSITORY" --title "$title" \
+              --body "Spotify's refresh token expired (they last 6 months). The music card is showing its last snapshot and the live Now playing has stopped. From the repo root, run \`npm run spotify:auth -- --push\` and log in; that updates both GitHub and the Cloudflare Worker. Close this issue afterwards."
+          fi
       - name: Save music snapshot
         if: hashFiles('src/data/music.json') != ''
         uses: actions/cache/save@v6

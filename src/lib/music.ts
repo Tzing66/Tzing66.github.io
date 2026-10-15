@@ -6,19 +6,19 @@ export type Track = {
   album: string;
   image: string | null;
   url: string;
-  nowPlaying: boolean;
-  playedAt: string | null;
+  nowPlaying?: boolean;
+  playedAt?: string | null;
 };
 
 export type MusicData = {
   fetchedAt: string;
-  source: "lastfm";
+  source: "spotify";
   profile: string;
   recent: Track[];
-  topTracks: { title: string; artist: string; plays: number; url: string }[];
-  topArtists: { name: string; plays: number; url: string }[];
+  topTracks: Track[];
+  topArtists: { name: string; image: string | null; url: string }[];
 };
 
 const data = loadData<MusicData>("music");
-/** Listening data, or undefined when never fetched / empty, in which case the card hides. */
-export const music = data && (data.recent?.length || data.topTracks?.length) ? data : undefined;
+/** Spotify snapshot from build time, or undefined (never fetched, or an old Last.fm file), in which case the card hides. */
+export const music = data?.source === "spotify" && (data.recent?.length || data.topTracks?.length) ? data : undefined;

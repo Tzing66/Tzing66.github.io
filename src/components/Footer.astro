@@ -13,7 +13,7 @@ const stale = (iso?: string | null) => !iso || builtAt.getTime() - new Date(iso)
 // Status reflects real data freshness at build time, not a hard-coded "all good".
 const degraded = [
   stale(github?.fetchedAt) && "github",
-  musicConfig.lastfmUser && stale(music?.fetchedAt) && "music",
+  musicConfig.enabled && stale(music?.fetchedAt) && "music",
 ].filter(Boolean);
 const track = music?.recent[0];
 ---

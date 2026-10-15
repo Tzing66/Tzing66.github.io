@@ -302,10 +302,12 @@ export const currently: (string | { text: string; href: string })[] = [
   "Finding the next big breakthrough",
 ];
 
-// Listening data for the Now section, fetched at build time from Last.fm (see scripts/fetch-lastfm.ts).
-// Leave lastfmUser empty to hide the card.
+// Spotify listening data for the Now section. A snapshot is fetched at build time
+// (scripts/fetch-spotify.ts); "now playing" is then polled live from the Worker in worker/.
 export const music = {
-  lastfmUser: "tanzinii",
+  enabled: true,
+  nowPlayingUrl: "https://now-playing.now-playing-worker.workers.dev/now", // the Worker (worker/); empty = snapshot only
+  pollSeconds: 30,
 };
 
 // Extra small cards for the Now bento grid (a book, a game, gym stats…). Empty = none shown.

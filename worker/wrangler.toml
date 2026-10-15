@@ -1,0 +1,10 @@
+# Live "now playing" for the portfolio's music card. Deploy: `npx wrangler deploy` (from worker/).
+# Secrets (set via `npm run spotify:auth -- --push` in the repo root, never committed):
+#   SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REFRESH_TOKEN
+name = "now-playing"
+main = "src/index.ts"
+compatibility_date = "2026-10-15"
+workers_dev = true
+
+[vars]
+ALLOWED_ORIGINS = "https://tzing66.github.io,http://localhost:4321"
